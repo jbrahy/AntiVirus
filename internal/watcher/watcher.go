@@ -17,10 +17,16 @@ func Watch(paths []string, onFile func(path string), stop <-chan struct{}) error
 	}
 	defer w.Close()
 
+	added := 0
 	for _, p := range paths {
 		if err := w.Add(p); err != nil {
 			fmt.Printf("watch error on %s (dropping this path): %v\n", p, err)
+			continue
 		}
+		added++
+	}
+	if added == 0 {
+		return fmt.Errorf("failed to watch any of the %d given path(s)", len(paths))
 	}
 
 	pending := map[string]*time.Timer{}

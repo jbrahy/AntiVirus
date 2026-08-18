@@ -9,6 +9,30 @@ import (
 	"time"
 )
 
+func TestWatchReturnsErrorWhenAllPathsFail(t *testing.T) {
+	nonexistent := []string{
+		filepath.Join(t.TempDir(), "does-not-exist-1"),
+		filepath.Join(t.TempDir(), "does-not-exist-2"),
+	}
+
+	stop := make(chan struct{})
+	defer close(stop)
+
+	done := make(chan error, 1)
+	go func() {
+		done <- Watch(nonexistent, func(path string) {}, stop)
+	}()
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("expected error when all watched paths fail to add, got nil")
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("Watch did not return promptly when all given paths were nonexistent")
+	}
+}
+
 func TestWatchDebouncesMultipleWrites(t *testing.T) {
 	dir := t.TempDir()
 	target := filepath.Join(dir, "file.bin")

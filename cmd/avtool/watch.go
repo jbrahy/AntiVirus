@@ -50,6 +50,19 @@ func runWatch(cmd *cobra.Command, args []string) error {
 	db := dbFromCmd(cmd)
 	handler := newFileHandler(db, notify.MacOSNotifier{}, cmd.ErrOrStderr())
 
+	// Pre-validate paths so the startup message reports how many paths
+	// actually exist and will be watched, not just how many were passed.
+	// watcher.Watch's own zero-success check still catches paths that
+	// exist but fail to add for other reasons (e.g. permissions).
+	existing := 0
+	for _, p := range args {
+		if _, err := os.Stat(p); err == nil {
+			existing++
+		} else {
+			fmt.Fprintf(cmd.ErrOrStderr(), "watch: %s does not exist, will not be watched: %v\n", p, err)
+		}
+	}
+
 	stop := make(chan struct{})
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -58,6 +71,6 @@ func runWatch(cmd *cobra.Command, args []string) error {
 		close(stop)
 	}()
 
-	fmt.Fprintf(cmd.OutOrStdout(), "watching %d path(s), press Ctrl+C to stop\n", len(args))
+	fmt.Fprintf(cmd.OutOrStdout(), "watching %d path(s), press Ctrl+C to stop\n", existing)
 	return watcher.Watch(args, handler, stop)
 }
