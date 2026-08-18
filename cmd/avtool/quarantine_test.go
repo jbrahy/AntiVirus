@@ -16,7 +16,6 @@ func TestQuarantineListRestorePurge(t *testing.T) {
 	dir := t.TempDir()
 	qDir := filepath.Join(t.TempDir(), "quarantine")
 	dbPath := filepath.Join(t.TempDir(), "avtool.db")
-	t.Setenv("AVTOOL_QUARANTINE_DIR", qDir)
 
 	db, err := store.Open(dbPath)
 	if err != nil {
@@ -41,7 +40,7 @@ func TestQuarantineListRestorePurge(t *testing.T) {
 	}
 	db.Close()
 
-	out := runCLI(t, dbPath, "quarantine", "list")
+	out := runCLI(t, dbPath, "--quarantine-dir", qDir, "quarantine", "list")
 	if !strings.Contains(out, "restorehash") || !strings.Contains(out, "purgehash") {
 		t.Fatalf("list output = %q", out)
 	}
@@ -49,7 +48,7 @@ func TestQuarantineListRestorePurge(t *testing.T) {
 	buf := &bytes.Buffer{}
 	rootCmd.SetOut(buf)
 	rootCmd.SetErr(buf)
-	rootCmd.SetArgs([]string{"--db-path", dbPath, "quarantine", "restore", strconv.FormatInt(restoreID, 10)})
+	rootCmd.SetArgs([]string{"--db-path", dbPath, "--quarantine-dir", qDir, "quarantine", "restore", strconv.FormatInt(restoreID, 10)})
 	if err := rootCmd.Execute(); err != nil {
 		t.Fatalf("restore Execute: %v", err)
 	}
@@ -58,7 +57,7 @@ func TestQuarantineListRestorePurge(t *testing.T) {
 	}
 
 	buf.Reset()
-	rootCmd.SetArgs([]string{"--db-path", dbPath, "quarantine", "purge", strconv.FormatInt(purgeID, 10)})
+	rootCmd.SetArgs([]string{"--db-path", dbPath, "--quarantine-dir", qDir, "quarantine", "purge", strconv.FormatInt(purgeID, 10)})
 	if err := rootCmd.Execute(); err != nil {
 		t.Fatalf("purge Execute: %v", err)
 	}

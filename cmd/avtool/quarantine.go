@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/jbrahy/AntiVirus/internal/config"
@@ -18,15 +17,9 @@ var quarantineCmd = &cobra.Command{
 }
 
 func getQuarantineDir() (string, error) {
-	// Check flag first
 	if quarantineDirFlag != "" {
 		return quarantineDirFlag, nil
 	}
-	// Check environment variable
-	if qDir := os.Getenv("AVTOOL_QUARANTINE_DIR"); qDir != "" {
-		return qDir, nil
-	}
-	// Fall back to config
 	return config.QuarantineDir()
 }
 
