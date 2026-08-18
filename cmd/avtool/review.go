@@ -32,7 +32,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	qDir, err := config.QuarantineDir()
+	qDir, err := getQuarantineDir()
 	if err != nil {
 		return err
 	}

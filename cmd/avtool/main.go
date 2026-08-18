@@ -15,10 +15,13 @@ import (
 type dbContextKey struct{}
 
 var dbPathFlag string
+var quarantineDirFlag string
 
 var rootCmd = &cobra.Command{
-	Use:   "avtool",
-	Short: "Hash-based antivirus scanner and watcher for macOS",
+	Use:           "avtool",
+	Short:         "Hash-based antivirus scanner and watcher for macOS",
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		path := dbPathFlag
 		if path == "" {
@@ -62,6 +65,7 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&dbPathFlag, "db-path", "", "path to avtool's SQLite database (default: ~/Library/Application Support/avtool/avtool.db)")
+	rootCmd.PersistentFlags().StringVar(&quarantineDirFlag, "quarantine-dir", "", "path to quarantine directory (default: ~/Library/Application Support/avtool/quarantine)")
 	rootCmd.AddCommand(versionCmd)
 }
 

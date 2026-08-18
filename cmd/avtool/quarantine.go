@@ -9,8 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var quarantineDirFlag string
-
 var quarantineCmd = &cobra.Command{
 	Use:   "quarantine",
 	Short: "Manage quarantined files",
@@ -59,6 +57,7 @@ var quarantineRestoreCmd = &cobra.Command{
 			return err
 		}
 		fmt.Fprintf(cmd.OutOrStdout(), "restored %d\n", id)
+		fmt.Fprintln(cmd.OutOrStdout(), "note: file permissions were reset when quarantined; you may need to chmod it")
 		return nil
 	},
 }
@@ -86,6 +85,5 @@ var quarantinePurgeCmd = &cobra.Command{
 
 func init() {
 	quarantineCmd.AddCommand(quarantineListCmd, quarantineRestoreCmd, quarantinePurgeCmd)
-	quarantineCmd.PersistentFlags().StringVar(&quarantineDirFlag, "quarantine-dir", "", "path to quarantine directory")
 	rootCmd.AddCommand(quarantineCmd)
 }

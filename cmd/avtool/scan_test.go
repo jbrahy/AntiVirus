@@ -2,12 +2,15 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/jbrahy/AntiVirus/internal/quarantine"
 	"github.com/jbrahy/AntiVirus/internal/scanner"
+	"github.com/jbrahy/AntiVirus/internal/store"
 )
 
 func hashFileForTest(path string) (string, error) {
@@ -44,6 +47,49 @@ func TestScanReportsAndPromptsOnMatch(t *testing.T) {
 	}
 	if _, err := os.Stat(badFile); err != nil {
 		t.Fatalf("expected file untouched after ignore: %v", err)
+	}
+}
+
+func TestScanQuarantineDirFlagAffectsWhereScanQuarantines(t *testing.T) {
+	dbPath := filepath.Join(t.TempDir(), "avtool.db")
+	scanDir := t.TempDir()
+	qDir := filepath.Join(t.TempDir(), "custom-quarantine")
+
+	badFile := filepath.Join(scanDir, "bad.bin")
+	if err := os.WriteFile(badFile, []byte("simulated malicious content for quarantine flag test"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	hash, err := hashFileForTest(badFile)
+	if err != nil {
+		t.Fatalf("hashFileForTest: %v", err)
+	}
+	runCLI(t, dbPath, "hashes", "add", hash, "TestVirus")
+
+	buf := &bytes.Buffer{}
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
+	rootCmd.SetIn(strings.NewReader("q\n"))
+	rootCmd.SetArgs([]string{"--db-path", dbPath, "--quarantine-dir", qDir, "scan", scanDir})
+	if err := rootCmd.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	db, err := store.Open(dbPath)
+	if err != nil {
+		t.Fatalf("store.Open: %v", err)
+	}
+	defer db.Close()
+	records, err := quarantine.List(db)
+	if err != nil {
+		t.Fatalf("quarantine.List: %v", err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("expected 1 quarantine record, got %+v", records)
+	}
+
+	bodyPath := filepath.Join(qDir, fmt.Sprintf("%d-%s", records[0].ID, records[0].Hash))
+	if _, err := os.Stat(bodyPath); err != nil {
+		t.Fatalf("expected quarantined body under --quarantine-dir at %s: %v", bodyPath, err)
 	}
 }
 
