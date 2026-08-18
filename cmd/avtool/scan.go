@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
@@ -45,7 +46,7 @@ func runScan(cmd *cobra.Command, args []string) error {
 		DB:            db,
 		QuarantineDir: qDir,
 		ReportLogPath: logPath,
-		In:            cmd.InOrStdin(),
+		In:            bufio.NewReader(cmd.InOrStdin()),
 		Out:           cmd.OutOrStdout(),
 	}
 	for _, m := range matches {

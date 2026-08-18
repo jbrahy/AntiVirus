@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 
 	"github.com/jbrahy/AntiVirus/internal/config"
@@ -44,7 +45,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 		DB:            db,
 		QuarantineDir: qDir,
 		ReportLogPath: logPath,
-		In:            cmd.InOrStdin(),
+		In:            bufio.NewReader(cmd.InOrStdin()),
 		Out:           cmd.OutOrStdout(),
 	}
 

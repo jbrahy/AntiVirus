@@ -28,7 +28,7 @@ type Deps struct {
 	DB            *sql.DB
 	QuarantineDir string
 	ReportLogPath string
-	In            io.Reader
+	In            *bufio.Reader
 	Out           io.Writer
 }
 
@@ -36,10 +36,12 @@ func Resolve(d Deps, m scanner.Match) (Action, error) {
 	fmt.Fprintf(d.Out, "MATCH: %s\n  hash:   %s\n  known:  %s\n  source: %s\n\n[q]uarantine  [d]elete  [i]gnore  [r]eport-only: ",
 		m.Path, m.Hash, m.Entry.Name, m.Entry.Source)
 
-	reader := bufio.NewReader(d.In)
-	line, err := reader.ReadString('\n')
+	line, err := d.In.ReadString('\n')
 	if err != nil && err != io.EOF {
 		return "", fmt.Errorf("reading choice: %w", err)
+	}
+	if err == io.EOF && strings.TrimSpace(line) == "" {
+		return "", fmt.Errorf("no input available to resolve %s (stdin closed) — run interactively or use 'report' explicitly", m.Path)
 	}
 	choice := strings.ToLower(strings.TrimSpace(line))
 
@@ -50,6 +52,13 @@ func Resolve(d Deps, m scanner.Match) (Action, error) {
 		}
 		return ActionQuarantine, nil
 	case "d", "delete":
+		fmt.Fprintf(d.Out, "Permanently delete %s? This cannot be undone. [y/N]: ", m.Path)
+		confirmLine, _ := d.In.ReadString('\n')
+		confirm := strings.ToLower(strings.TrimSpace(confirmLine))
+		if confirm != "y" && confirm != "yes" {
+			fmt.Fprintln(d.Out, "delete cancelled")
+			return ActionIgnore, nil
+		}
 		if err := os.Remove(m.Path); err != nil {
 			return "", fmt.Errorf("deleting %s: %w", m.Path, err)
 		}

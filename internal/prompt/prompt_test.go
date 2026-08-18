@@ -2,6 +2,7 @@
 package prompt
 
 import (
+	"bufio"
 	"bytes"
 	"os"
 	"path/filepath"
@@ -44,7 +45,7 @@ func TestResolveQuarantine(t *testing.T) {
 	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
 		t.Fatalf("WriteFile: %v", err)
 	}
-	deps.In = strings.NewReader("q\n")
+	deps.In = bufio.NewReader(strings.NewReader("q\n"))
 	deps.Out = &bytes.Buffer{}
 
 	action, err := Resolve(deps, m)
@@ -65,7 +66,7 @@ func TestResolveDelete(t *testing.T) {
 	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
 		t.Fatalf("WriteFile: %v", err)
 	}
-	deps.In = strings.NewReader("d\n")
+	deps.In = bufio.NewReader(strings.NewReader("d\ny\n"))
 	deps.Out = &bytes.Buffer{}
 
 	action, err := Resolve(deps, m)
@@ -80,13 +81,34 @@ func TestResolveDelete(t *testing.T) {
 	}
 }
 
+func TestResolveDeleteCancelled(t *testing.T) {
+	deps, dir := setup(t)
+	m := testMatch(dir)
+	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	deps.In = bufio.NewReader(strings.NewReader("d\nn\n"))
+	deps.Out = &bytes.Buffer{}
+
+	action, err := Resolve(deps, m)
+	if err != nil {
+		t.Fatalf("Resolve: %v", err)
+	}
+	if action != ActionIgnore {
+		t.Fatalf("action = %v, want ignore", action)
+	}
+	if _, err := os.Stat(m.Path); err != nil {
+		t.Fatalf("expected file untouched after cancelled delete: %v", err)
+	}
+}
+
 func TestResolveIgnore(t *testing.T) {
 	deps, dir := setup(t)
 	m := testMatch(dir)
 	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
 		t.Fatalf("WriteFile: %v", err)
 	}
-	deps.In = strings.NewReader("i\n")
+	deps.In = bufio.NewReader(strings.NewReader("i\n"))
 	deps.Out = &bytes.Buffer{}
 
 	action, err := Resolve(deps, m)
@@ -107,7 +129,7 @@ func TestResolveReportDefault(t *testing.T) {
 	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
 		t.Fatalf("WriteFile: %v", err)
 	}
-	deps.In = strings.NewReader("\n") // empty input defaults to report-only
+	deps.In = bufio.NewReader(strings.NewReader("\n")) // empty line defaults to report-only
 	deps.Out = &bytes.Buffer{}
 
 	action, err := Resolve(deps, m)
@@ -119,5 +141,20 @@ func TestResolveReportDefault(t *testing.T) {
 	}
 	if _, err := os.Stat(deps.ReportLogPath); err != nil {
 		t.Fatalf("expected report log written: %v", err)
+	}
+}
+
+func TestResolveEOFReturnsError(t *testing.T) {
+	deps, dir := setup(t)
+	m := testMatch(dir)
+	if err := os.WriteFile(m.Path, []byte("payload"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	deps.In = bufio.NewReader(strings.NewReader("")) // closed/empty stdin
+	deps.Out = &bytes.Buffer{}
+
+	action, err := Resolve(deps, m)
+	if err == nil {
+		t.Fatalf("expected error on closed stdin, got action %v", action)
 	}
 }
