@@ -23,6 +23,32 @@ func TestOpenCreatesSchema(t *testing.T) {
 	}
 }
 
+func TestOpenSetsBusyTimeoutAndWAL(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "avtool.db")
+
+	db, err := Open(path)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer db.Close()
+
+	var journalMode string
+	if err := db.QueryRow(`PRAGMA journal_mode`).Scan(&journalMode); err != nil {
+		t.Fatalf("PRAGMA journal_mode: %v", err)
+	}
+	if journalMode != "wal" {
+		t.Errorf("journal_mode = %q, want %q", journalMode, "wal")
+	}
+
+	var busyTimeout int
+	if err := db.QueryRow(`PRAGMA busy_timeout`).Scan(&busyTimeout); err != nil {
+		t.Fatalf("PRAGMA busy_timeout: %v", err)
+	}
+	if busyTimeout != 5000 {
+		t.Errorf("busy_timeout = %d, want %d", busyTimeout, 5000)
+	}
+}
+
 func TestOpenIsIdempotent(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "avtool.db")
 

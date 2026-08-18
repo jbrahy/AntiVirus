@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS quarantine_records (
 `
 
 func Open(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", path)
+	dsn := path + "?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("opening db at %s: %w", path, err)
 	}
