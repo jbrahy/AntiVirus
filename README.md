@@ -23,7 +23,7 @@ known-bad sample. See the full design rationale and scope in
 
 ## Status
 
-Design complete, implementation not yet started.
+v1 implemented: `scan`, `watch`, `review`, `sync`, `hashes`, and `quarantine` are all working. Build with `go build -o bin/avtool ./cmd/avtool`.
 
 ## Platform
 

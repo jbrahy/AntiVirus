@@ -41,7 +41,7 @@ func Resolve(d Deps, m scanner.Match) (Action, error) {
 		return "", fmt.Errorf("reading choice: %w", err)
 	}
 	if err == io.EOF && strings.TrimSpace(line) == "" {
-		return "", fmt.Errorf("no input available to resolve %s (stdin closed) — run interactively or use 'report' explicitly", m.Path)
+		return "", fmt.Errorf("no input available to resolve %s (stdin closed): run interactively or use 'report' explicitly", m.Path)
 	}
 	choice := strings.ToLower(strings.TrimSpace(line))
 
