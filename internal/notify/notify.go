@@ -16,10 +16,21 @@ func (MacOSNotifier) Notify(title, message string) error {
 func escape(s string) string {
 	out := make([]rune, 0, len(s))
 	for _, r := range s {
-		if r == '"' || r == '\\' {
-			out = append(out, '\\')
+		switch r {
+		case '"', '\\':
+			out = append(out, '\\', r)
+		case '\n':
+			out = append(out, '\\', 'n')
+		case '\r':
+			out = append(out, '\\', 'r')
+		case '\t':
+			out = append(out, '\\', 't')
+		default:
+			if r < 0x20 {
+				continue
+			}
+			out = append(out, r)
 		}
-		out = append(out, r)
 	}
 	return string(out)
 }
