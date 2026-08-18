@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -61,7 +62,7 @@ func TestQuarantineListRestorePurge(t *testing.T) {
 	if err := rootCmd.Execute(); err != nil {
 		t.Fatalf("purge Execute: %v", err)
 	}
-	if _, err := os.Stat(filepath.Join(qDir, "purgehash")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(qDir, fmt.Sprintf("%d-purgehash", purgeID))); !os.IsNotExist(err) {
 		t.Fatalf("expected purged file removed, err = %v", err)
 	}
 }

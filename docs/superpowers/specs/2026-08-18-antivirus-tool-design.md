@@ -100,8 +100,10 @@ One SQLite database at
 `~/Library/Application Support/avtool/avtool.db` containing three
 tables: hash entries (hashdb), queued detections, and quarantine
 records. Quarantined file bodies live as files under
-`~/Library/Application Support/avtool/quarantine/`, named by their
-hash; the DB row is the source of truth for original path and status.
+`~/Library/Application Support/avtool/quarantine/`, named
+`<quarantine_records.id>-<hash>` (the id disambiguates two different
+files that happen to share the same content/hash); the DB row is the
+source of truth for original path and status.
 
 ## Detection handling flow (the prompt)
 

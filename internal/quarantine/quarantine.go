@@ -17,17 +17,16 @@ type Record struct {
 	Restored      bool
 }
 
+// quarantineFileName builds the on-disk name for a quarantined file's body.
+// It is prefixed with the quarantine_records id so that two different files
+// sharing the same content/hash don't collide on the same body file.
+func quarantineFileName(id int64, hash string) string {
+	return fmt.Sprintf("%d-%s", id, hash)
+}
+
 func Quarantine(db *sql.DB, quarantineDir, path, hash string) (int64, error) {
 	if err := os.MkdirAll(quarantineDir, 0o755); err != nil {
 		return 0, fmt.Errorf("creating quarantine dir: %w", err)
-	}
-	dest := filepath.Join(quarantineDir, hash)
-
-	if err := moveFile(path, dest); err != nil {
-		return 0, fmt.Errorf("moving %s to quarantine: %w", path, err)
-	}
-	if err := os.Chmod(dest, 0o600); err != nil {
-		return 0, fmt.Errorf("stripping execute bit on %s: %w", dest, err)
 	}
 
 	res, err := db.Exec(
@@ -37,7 +36,20 @@ func Quarantine(db *sql.DB, quarantineDir, path, hash string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("recording quarantine: %w", err)
 	}
-	return res.LastInsertId()
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("getting quarantine record id: %w", err)
+	}
+
+	dest := filepath.Join(quarantineDir, quarantineFileName(id, hash))
+	if err := moveFile(path, dest); err != nil {
+		return 0, fmt.Errorf("moving %s to quarantine: %w", path, err)
+	}
+	if err := os.Chmod(dest, 0o600); err != nil {
+		return 0, fmt.Errorf("stripping execute bit on %s: %w", dest, err)
+	}
+
+	return id, nil
 }
 
 func Restore(db *sql.DB, quarantineDir string, id int64) error {
@@ -55,7 +67,7 @@ func Restore(db *sql.DB, quarantineDir string, id int64) error {
 		return fmt.Errorf("quarantine record %d already restored", id)
 	}
 
-	src := filepath.Join(quarantineDir, hash)
+	src := filepath.Join(quarantineDir, quarantineFileName(id, hash))
 	if err := moveFile(src, originalPath); err != nil {
 		return fmt.Errorf("restoring %s: %w", originalPath, err)
 	}
@@ -75,7 +87,7 @@ func Purge(db *sql.DB, quarantineDir string, id int64) error {
 		return fmt.Errorf("looking up quarantine record %d: %w", id, err)
 	}
 	if !restored {
-		if err := os.Remove(filepath.Join(quarantineDir, hash)); err != nil && !os.IsNotExist(err) {
+		if err := os.Remove(filepath.Join(quarantineDir, quarantineFileName(id, hash))); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("removing quarantined file: %w", err)
 		}
 	}
