@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-const fixtureCSV = `# first_seen_utc,sha256_hash,md5_hash,sha1_hash,reporter,file_name,file_type_guess,mime_type,signature
-"2026-08-17 10:00:00","aaa111","m1","s1","reporter1","a.exe","exe","application/x-msdownload","TrojanA"
-"2026-08-17 11:00:00","bbb222","m2","s2","reporter2","b.exe","exe","application/x-msdownload","TrojanB"
+const fixtureCSV = `# first_seen_utc, sha256_hash, md5_hash, sha1_hash, reporter, file_name, file_type_guess, mime_type, signature
+"2026-08-17 10:00:00", "aaa111", "m1", "s1", "reporter1", "a.exe", "exe", "application/x-msdownload", "TrojanA"
+"2026-08-17 11:00:00", "bbb222", "m2", "s2", "reporter2", "b.exe", "exe", "application/x-msdownload", "TrojanB"
 `
 
 func TestParse(t *testing.T) {

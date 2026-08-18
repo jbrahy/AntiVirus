@@ -19,20 +19,39 @@ func runCLI(t *testing.T, dbPath string, args ...string) string {
 	return buf.String()
 }
 
+const testHash64 = "2baf1f40105d9501fe319a8ec463fdf4325a2a5df445adf3f572f626253678c9"
+
 func TestHashesAddListRm(t *testing.T) {
 	dbPath := filepath.Join(t.TempDir(), "avtool.db")
 
-	runCLI(t, dbPath, "hashes", "add", "deadbeef", "TestVirus")
+	runCLI(t, dbPath, "hashes", "add", testHash64, "TestVirus")
 
 	out := runCLI(t, dbPath, "hashes", "list")
-	if !strings.Contains(out, "deadbeef") || !strings.Contains(out, "TestVirus") {
+	if !strings.Contains(out, testHash64) || !strings.Contains(out, "TestVirus") {
 		t.Fatalf("list output = %q", out)
 	}
 
-	runCLI(t, dbPath, "hashes", "rm", "deadbeef")
+	runCLI(t, dbPath, "hashes", "rm", testHash64)
 
 	out = runCLI(t, dbPath, "hashes", "list")
-	if strings.Contains(out, "deadbeef") {
-		t.Fatalf("expected deadbeef removed, got %q", out)
+	if strings.Contains(out, testHash64) {
+		t.Fatalf("expected %s removed, got %q", testHash64, out)
+	}
+}
+
+func TestHashesAddRejectsMalformedHash(t *testing.T) {
+	dbPath := filepath.Join(t.TempDir(), "avtool.db")
+
+	buf := &bytes.Buffer{}
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
+	rootCmd.SetArgs([]string{"--db-path", dbPath, "hashes", "add", "not-a-hash", "TestVirus"})
+	if err := rootCmd.Execute(); err == nil {
+		t.Fatal("expected error for malformed hash, got nil")
+	}
+
+	rootCmd.SetArgs([]string{"--db-path", dbPath, "hashes", "add", "deadbeef", "TestVirus"})
+	if err := rootCmd.Execute(); err == nil {
+		t.Fatal("expected error for too-short hash, got nil")
 	}
 }

@@ -66,6 +66,46 @@ func TestFeedNeverOverwritesManual(t *testing.T) {
 	}
 }
 
+func TestHashCaseInsensitivity(t *testing.T) {
+	db := openTestDB(t)
+
+	// Upsert uppercase, look up lowercase.
+	if err := Upsert(db, []Entry{{Hash: "AAAABBBBCCCC", Name: "UpperVirus", Source: "manual", AddedAt: time.Now()}}); err != nil {
+		t.Fatalf("Upsert uppercase: %v", err)
+	}
+	e, err := Lookup(db, "aaaabbbbcccc")
+	if err != nil {
+		t.Fatalf("Lookup lowercase: %v", err)
+	}
+	if e == nil || e.Name != "UpperVirus" {
+		t.Fatalf("Lookup lowercase after uppercase Upsert = %+v", e)
+	}
+
+	// Upsert lowercase, look up uppercase.
+	if err := Upsert(db, []Entry{{Hash: "ddddeeeeffff", Name: "LowerVirus", Source: "manual", AddedAt: time.Now()}}); err != nil {
+		t.Fatalf("Upsert lowercase: %v", err)
+	}
+	e, err = Lookup(db, "DDDDEEEEFFFF")
+	if err != nil {
+		t.Fatalf("Lookup uppercase: %v", err)
+	}
+	if e == nil || e.Name != "LowerVirus" {
+		t.Fatalf("Lookup uppercase after lowercase Upsert = %+v", e)
+	}
+
+	// Remove using a differently-cased hash still removes the entry.
+	if err := Remove(db, "AAAABBBBCCCC"); err != nil {
+		t.Fatalf("Remove uppercase: %v", err)
+	}
+	e, err = Lookup(db, "aaaabbbbcccc")
+	if err != nil {
+		t.Fatalf("Lookup after Remove: %v", err)
+	}
+	if e != nil {
+		t.Fatalf("expected nil after case-insensitive Remove, got %+v", e)
+	}
+}
+
 func TestList(t *testing.T) {
 	db := openTestDB(t)
 

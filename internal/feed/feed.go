@@ -35,6 +35,7 @@ func Parse(r io.Reader) ([]hashdb.Entry, error) {
 	reader := csv.NewReader(r)
 	reader.FieldsPerRecord = -1
 	reader.Comment = '#'
+	reader.TrimLeadingSpace = true
 
 	now := time.Now().UTC()
 	var entries []hashdb.Entry
@@ -49,7 +50,7 @@ func Parse(r io.Reader) ([]hashdb.Entry, error) {
 		if len(record) <= colSignature {
 			continue
 		}
-		hash := strings.TrimSpace(record[colSHA256])
+		hash := strings.ToLower(strings.TrimSpace(record[colSHA256]))
 		if hash == "" {
 			continue
 		}

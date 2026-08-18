@@ -3,8 +3,16 @@ package hashdb
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 )
+
+// normalizeHash lowercases and trims a hash string so lookups are
+// case-insensitive regardless of how the hash was originally supplied
+// (e.g. uppercase output from PowerShell's Get-FileHash).
+func normalizeHash(hash string) string {
+	return strings.ToLower(strings.TrimSpace(hash))
+}
 
 type Entry struct {
 	Hash    string
@@ -15,29 +23,31 @@ type Entry struct {
 
 func Upsert(db *sql.DB, entries []Entry) error {
 	for _, e := range entries {
+		hash := normalizeHash(e.Hash)
 		if e.Source == "feed" {
 			var existingSource string
-			err := db.QueryRow(`SELECT source FROM hash_entries WHERE hash = ?`, e.Hash).Scan(&existingSource)
+			err := db.QueryRow(`SELECT source FROM hash_entries WHERE hash = ?`, hash).Scan(&existingSource)
 			if err == nil && existingSource == "manual" {
 				continue
 			}
 			if err != nil && err != sql.ErrNoRows {
-				return fmt.Errorf("checking existing entry for %s: %w", e.Hash, err)
+				return fmt.Errorf("checking existing entry for %s: %w", hash, err)
 			}
 		}
 		_, err := db.Exec(
 			`INSERT INTO hash_entries (hash, name, source, added_at) VALUES (?, ?, ?, ?)
 			 ON CONFLICT(hash) DO UPDATE SET name = excluded.name, source = excluded.source, added_at = excluded.added_at`,
-			e.Hash, e.Name, e.Source, e.AddedAt.UTC().Format(time.RFC3339),
+			hash, e.Name, e.Source, e.AddedAt.UTC().Format(time.RFC3339),
 		)
 		if err != nil {
-			return fmt.Errorf("upserting %s: %w", e.Hash, err)
+			return fmt.Errorf("upserting %s: %w", hash, err)
 		}
 	}
 	return nil
 }
 
 func Lookup(db *sql.DB, hash string) (*Entry, error) {
+	hash = normalizeHash(hash)
 	var e Entry
 	var addedAt string
 	err := db.QueryRow(`SELECT hash, name, source, added_at FROM hash_entries WHERE hash = ?`, hash).
@@ -79,6 +89,7 @@ func List(db *sql.DB) ([]Entry, error) {
 }
 
 func Remove(db *sql.DB, hash string) error {
+	hash = normalizeHash(hash)
 	_, err := db.Exec(`DELETE FROM hash_entries WHERE hash = ?`, hash)
 	if err != nil {
 		return fmt.Errorf("removing %s: %w", hash, err)

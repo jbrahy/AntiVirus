@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/jbrahy/AntiVirus/internal/hashdb"
 	"github.com/spf13/cobra"
 )
+
+var sha256HashPattern = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
 
 var hashesCmd = &cobra.Command{
 	Use:   "hashes",
@@ -18,8 +22,12 @@ var hashesAddCmd = &cobra.Command{
 	Short: "Add a known-bad hash",
 	Args:  cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		hash := strings.TrimSpace(args[0])
+		if !sha256HashPattern.MatchString(hash) {
+			return fmt.Errorf("invalid sha256 hash %q: must be 64 hex characters", args[0])
+		}
 		return hashdb.Upsert(dbFromCmd(cmd), []hashdb.Entry{
-			{Hash: args[0], Name: args[1], Source: "manual", AddedAt: time.Now()},
+			{Hash: hash, Name: args[1], Source: "manual", AddedAt: time.Now()},
 		})
 	},
 }
