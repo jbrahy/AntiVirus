@@ -1,0 +1,16 @@
+# Go
+/bin/
+*.exe
+*.test
+*.out
+
+# Local runtime data
+*.db
+*.db-journal
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
