@@ -1,15 +1,54 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"os"
+	"path/filepath"
 
+	"github.com/jbrahy/AntiVirus/internal/config"
+	"github.com/jbrahy/AntiVirus/internal/store"
 	"github.com/spf13/cobra"
 )
+
+type dbContextKey struct{}
+
+var dbPathFlag string
 
 var rootCmd = &cobra.Command{
 	Use:   "avtool",
 	Short: "Hash-based antivirus scanner and watcher for macOS",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		path := dbPathFlag
+		if path == "" {
+			p, err := config.DBPath()
+			if err != nil {
+				return err
+			}
+			path = p
+		}
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			return fmt.Errorf("creating db directory: %w", err)
+		}
+		db, err := store.Open(path)
+		if err != nil {
+			return err
+		}
+		cmd.SetContext(context.WithValue(cmd.Context(), dbContextKey{}, db))
+		return nil
+	},
+	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+		if db := dbFromCmd(cmd); db != nil {
+			return db.Close()
+		}
+		return nil
+	},
+}
+
+func dbFromCmd(cmd *cobra.Command) *sql.DB {
+	db, _ := cmd.Context().Value(dbContextKey{}).(*sql.DB)
+	return db
 }
 
 var versionCmd = &cobra.Command{
@@ -22,6 +61,7 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVar(&dbPathFlag, "db-path", "", "path to avtool's SQLite database (default: ~/Library/Application Support/avtool/avtool.db)")
 	rootCmd.AddCommand(versionCmd)
 }
 
