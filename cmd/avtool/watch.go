@@ -6,7 +6,9 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
+	"time"
 
 	"github.com/jbrahy/AntiVirus/internal/detections"
 	"github.com/jbrahy/AntiVirus/internal/notify"
@@ -14,6 +16,10 @@ import (
 	"github.com/jbrahy/AntiVirus/internal/watcher"
 	"github.com/spf13/cobra"
 )
+
+const heartbeatInterval = 60 * time.Second
+
+var watchQuiet bool
 
 var watchCmd = &cobra.Command{
 	Use:   "watch <path> [path...]",
@@ -23,11 +29,37 @@ var watchCmd = &cobra.Command{
 }
 
 func init() {
+	watchCmd.Flags().BoolVar(&watchQuiet, "quiet", false, "suppress the periodic heartbeat status line")
 	rootCmd.AddCommand(watchCmd)
 }
 
-func newFileHandler(db *sql.DB, n notify.Notifier, errOut io.Writer) func(path string) {
+type watchStats struct {
+	mu      sync.Mutex
+	scanned int
+	matches int
+}
+
+func (s *watchStats) recordScan() {
+	s.mu.Lock()
+	s.scanned++
+	s.mu.Unlock()
+}
+
+func (s *watchStats) recordMatch() {
+	s.mu.Lock()
+	s.matches++
+	s.mu.Unlock()
+}
+
+func (s *watchStats) snapshot() (scanned, matches int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.scanned, s.matches
+}
+
+func newFileHandler(db *sql.DB, n notify.Notifier, errOut io.Writer, stats *watchStats) func(path string) {
 	return func(path string) {
+		stats.recordScan()
 		m, err := scanner.ScanFile(db, path)
 		if err != nil {
 			fmt.Fprintf(errOut, "scanning %s: %v\n", path, err)
@@ -36,6 +68,7 @@ func newFileHandler(db *sql.DB, n notify.Notifier, errOut io.Writer) func(path s
 		if m == nil {
 			return
 		}
+		stats.recordMatch()
 		if _, err := detections.Enqueue(db, *m); err != nil {
 			fmt.Fprintf(errOut, "queueing detection for %s: %v\n", path, err)
 			return
@@ -46,9 +79,25 @@ func newFileHandler(db *sql.DB, n notify.Notifier, errOut io.Writer) func(path s
 	}
 }
 
+// runHeartbeat prints a periodic status line until stop is closed.
+func runHeartbeat(out io.Writer, stats *watchStats, interval time.Duration, stop <-chan struct{}) {
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-stop:
+			return
+		case <-ticker.C:
+			scanned, matches := stats.snapshot()
+			fmt.Fprintf(out, "watching: %d files scanned, %d matches (as of %s)\n", scanned, matches, time.Now().Format("15:04:05"))
+		}
+	}
+}
+
 func runWatch(cmd *cobra.Command, args []string) error {
 	db := dbFromCmd(cmd)
-	handler := newFileHandler(db, notify.MacOSNotifier{}, cmd.ErrOrStderr())
+	stats := &watchStats{}
+	handler := newFileHandler(db, notify.MacOSNotifier{}, cmd.ErrOrStderr(), stats)
 
 	// Pre-validate paths so the startup message reports how many paths
 	// actually exist and will be watched, not just how many were passed.
@@ -72,5 +121,10 @@ func runWatch(cmd *cobra.Command, args []string) error {
 	}()
 
 	fmt.Fprintf(cmd.OutOrStdout(), "watching %d path(s), press Ctrl+C to stop\n", existing)
+
+	if !watchQuiet {
+		go runHeartbeat(cmd.OutOrStdout(), stats, heartbeatInterval, stop)
+	}
+
 	return watcher.Watch(args, handler, stop)
 }

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -46,7 +48,8 @@ func TestFileHandlerEnqueuesAndNotifiesOnMatch(t *testing.T) {
 	}
 
 	n := &fakeNotifier{}
-	handler := newFileHandler(db, n, os.Stderr)
+	stats := &watchStats{}
+	handler := newFileHandler(db, n, os.Stderr, stats)
 
 	handler(badPath)
 	handler(goodPath)
@@ -60,5 +63,69 @@ func TestFileHandlerEnqueuesAndNotifiesOnMatch(t *testing.T) {
 	}
 	if len(n.calls) != 1 {
 		t.Fatalf("notifier calls = %v, want 1", n.calls)
+	}
+
+	scanned, matches := stats.snapshot()
+	if scanned != 2 {
+		t.Fatalf("scanned = %d, want 2", scanned)
+	}
+	if matches != 1 {
+		t.Fatalf("matches = %d, want 1", matches)
+	}
+}
+
+func TestRunHeartbeatPrintsPeriodically(t *testing.T) {
+	stats := &watchStats{}
+	stats.recordScan()
+	stats.recordScan()
+	stats.recordMatch()
+
+	buf := &bytes.Buffer{}
+	stop := make(chan struct{})
+	go func() {
+		time.Sleep(120 * time.Millisecond)
+		close(stop)
+	}()
+
+	runHeartbeat(buf, stats, 30*time.Millisecond, stop)
+
+	out := buf.String()
+	if !strings.Contains(out, "2 files scanned") {
+		t.Fatalf("heartbeat output = %q, want it to mention 2 files scanned", out)
+	}
+	if !strings.Contains(out, "1 matches") {
+		t.Fatalf("heartbeat output = %q, want it to mention 1 matches", out)
+	}
+	if strings.Count(out, "watching:") < 2 {
+		t.Fatalf("heartbeat output = %q, want at least 2 heartbeat lines", out)
+	}
+}
+
+func TestRunHeartbeatStopsOnStopChannel(t *testing.T) {
+	stats := &watchStats{}
+	buf := &bytes.Buffer{}
+	stop := make(chan struct{})
+	close(stop)
+
+	done := make(chan struct{})
+	go func() {
+		runHeartbeat(buf, stats, time.Hour, stop)
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("runHeartbeat did not return after stop was closed")
+	}
+}
+
+func TestWatchQuietFlagRegistered(t *testing.T) {
+	flag := watchCmd.Flags().Lookup("quiet")
+	if flag == nil {
+		t.Fatal("expected a --quiet flag on watch command")
+	}
+	if flag.DefValue != "false" {
+		t.Fatalf("--quiet default = %q, want false", flag.DefValue)
 	}
 }
