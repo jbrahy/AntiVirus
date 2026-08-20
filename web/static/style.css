@@ -1,22 +1,26 @@
 /* NexGuard — design system
-   Concept: the hash ledger. NexGuard's entire mechanism is an exact-match
-   lookup against a maintained list — so the site reads like a verification
-   report, not a marketing gradient. Monospace carries headlines and data;
-   serif carries prose. Two muted accents: brass for structure, verified
-   sage-green for confirmed/positive states. */
+   Concept: the shield. NexGuard stands guard over your files with a plain,
+   verifiable check — so the site reads bright, confident, protective:
+   a clean shield standing between you and a known-bad hash, not a dim
+   back-room ledger. Monospace carries headlines and data; serif carries
+   prose. Royal blue for the shield itself, burnished gold for the shine,
+   green for verified-clean. */
 
 :root {
-  --ink: #12151c;
-  --surface: #1a1e27;
-  --surface-raised: #1f2430;
-  --rule: #2a303d;
-  --paper: #ede9e3;
-  --paper-dim: #a6a49c;
-  --brass: #c99a4e;
-  --brass-dim: #9c7a3f;
-  --verified: #6fa88a;
-  --verified-dim: #547f68;
-  --flagged: #c0614a;
+  --ink: #16233d;
+  --ink-dim: #55647f;
+  --surface: #ffffff;
+  --surface-alt: #eef3fb;
+  --rule: #dbe4f2;
+  --paper: #f6f9fd;
+  --paper-dim: #55647f;
+  --shield: #2957a4;
+  --shield-dim: #1d3f7c;
+  --brass: #c8912b;
+  --brass-dim: #a6771c;
+  --verified: #1f9d55;
+  --verified-dim: #17793f;
+  --flagged: #d1453b;
 
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
@@ -27,12 +31,12 @@
 
 * { box-sizing: border-box; }
 
-html { color-scheme: dark; }
+html { color-scheme: light; }
 
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-serif);
   font-size: 17px;
   line-height: 1.65;
@@ -40,11 +44,11 @@ body {
 }
 
 a {
-  color: var(--verified);
-  text-decoration-color: var(--verified-dim);
+  color: var(--shield);
+  text-decoration-color: #a9bfe0;
   text-underline-offset: 0.2em;
 }
-a:hover { text-decoration-color: var(--verified); }
+a:hover { text-decoration-color: var(--shield); }
 
 :focus-visible {
   outline: 2px solid var(--brass);
@@ -55,7 +59,7 @@ h1, h2, h3 {
   font-family: var(--font-mono);
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--paper);
+  color: var(--ink);
   margin: 0 0 0.6em;
 }
 
@@ -83,24 +87,29 @@ code, .mono {
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: 0.02em;
-  color: var(--paper);
+  color: var(--ink);
   text-decoration: none;
 }
-.brand:hover { color: var(--paper); text-decoration: none; }
-.brand .dot { color: var(--verified); }
+.brand:hover { color: var(--ink); text-decoration: none; }
+.brand .dot { color: var(--brass); }
+.brand-mark { display: block; flex-shrink: 0; }
 
 .topbar nav {
   display: flex;
+  align-items: center;
   gap: 1.5rem;
   font-family: var(--font-mono);
   font-size: 0.85rem;
 }
-.topbar nav a { color: var(--paper-dim); text-decoration: none; }
-.topbar nav a:hover { color: var(--paper); }
+.topbar nav a { color: var(--ink-dim); text-decoration: none; }
+.topbar nav a:hover { color: var(--shield); }
 
 .section {
   padding: 3.5rem 0;
@@ -113,7 +122,7 @@ code, .mono {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--brass-dim);
   margin: 0 0 1rem;
 }
 
@@ -124,10 +133,10 @@ code, .mono {
 
 .lede {
   font-size: 1.12rem;
-  color: var(--paper);
+  color: var(--ink);
 }
 
-.dim { color: var(--paper-dim); }
+.dim { color: var(--ink-dim); }
 
 footer {
   border-top: 1px solid var(--rule);
@@ -136,15 +145,19 @@ footer {
   margin: 0 auto;
   font-family: var(--font-mono);
   font-size: 0.82rem;
-  color: var(--paper-dim);
+  color: var(--ink-dim);
 }
-footer a { color: var(--paper-dim); }
-footer a:hover { color: var(--verified); }
+footer a { color: var(--ink-dim); }
+footer a:hover { color: var(--shield); }
 
 /* ---- hero / hash demo ---- */
 
 .hero {
   padding: 3.5rem 0 3rem;
+  background:
+    radial-gradient(60rem 22rem at 50% -12rem, rgba(200, 145, 43, 0.16), transparent 65%),
+    radial-gradient(50rem 20rem at 50% -14rem, rgba(41, 87, 164, 0.14), transparent 60%);
+  background-repeat: no-repeat;
 }
 .hero h1 {
   font-size: clamp(1.9rem, 5vw, 2.6rem);
@@ -159,7 +172,8 @@ footer a:hover { color: var(--verified); }
 .ledger {
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px -18px rgba(41, 87, 164, 0.35);
   padding: 1.25rem 1.4rem;
   font-family: var(--font-mono);
   font-size: 0.86rem;
@@ -173,9 +187,9 @@ footer a:hover { color: var(--verified); }
   flex-wrap: wrap;
 }
 .ledger-row + .ledger-row { border-top: 1px solid var(--rule); }
-.ledger-file { color: var(--paper-dim); min-width: 9ch; }
+.ledger-file { color: var(--ink-dim); min-width: 9ch; }
 .ledger-hash {
-  color: var(--paper);
+  color: var(--ink);
   overflow: hidden;
   white-space: nowrap;
   border-right: 2px solid transparent;
@@ -191,10 +205,12 @@ footer a:hover { color: var(--verified); }
   animation: appear 0.4s ease-out 1.9s 1 forwards;
 }
 .ledger-verdict.clean { color: var(--verified); }
+.ledger-verdict.clean::before { content: '\2713  '; }
 .ledger-verdict.flagged { color: var(--flagged); }
+.ledger-verdict.flagged::before { content: '\26A0  '; }
 
 @keyframes reveal {
-  from { width: 0; border-right-color: var(--brass); }
+  from { width: 0; border-right-color: var(--shield); }
   to { width: 100%; border-right-color: transparent; }
 }
 @keyframes caret {
@@ -229,16 +245,16 @@ footer a:hover { color: var(--verified); }
   cursor: pointer;
 }
 .btn-primary {
-  background: var(--verified);
-  color: var(--ink);
+  background: var(--shield);
+  color: #ffffff;
 }
-.btn-primary:hover { background: #7fb99a; text-decoration: none; }
+.btn-primary:hover { background: var(--shield-dim); text-decoration: none; }
 .btn-secondary {
   background: transparent;
-  color: var(--paper);
+  color: var(--ink);
   border-color: var(--rule);
 }
-.btn-secondary:hover { border-color: var(--brass); text-decoration: none; }
+.btn-secondary:hover { border-color: var(--brass); color: var(--brass-dim); text-decoration: none; }
 .btn-block { display: block; width: 100%; text-align: center; }
 
 form { max-width: 24rem; }
@@ -249,15 +265,15 @@ form { max-width: 24rem; }
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--paper-dim);
+  color: var(--ink-dim);
   margin-bottom: 0.4rem;
 }
 input[type="email"], input[type="password"] {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 3px;
-  color: var(--paper);
+  border-radius: 5px;
+  color: var(--ink);
   font-family: var(--font-serif);
   font-size: 1rem;
   padding: 0.65rem 0.8rem;
@@ -272,8 +288,9 @@ input[type="email"]:focus, input[type="password"]:focus {
   font-family: var(--font-mono);
   font-size: 0.86rem;
   color: var(--flagged);
+  background: #fdf1f0;
   border: 1px solid var(--flagged);
-  border-radius: 3px;
+  border-radius: 5px;
   padding: 0.7rem 0.9rem;
   margin-bottom: 1.3rem;
 }
@@ -300,6 +317,7 @@ input[type="email"]:focus, input[type="password"]:focus {
   padding: 0.5rem 0;
   border-top: 1px solid var(--rule);
   font-size: 0.95rem;
+  color: var(--ink);
 }
 .compare-col li:first-of-type { border-top: none; }
 
@@ -310,8 +328,9 @@ input[type="email"]:focus, input[type="password"]:focus {
 /* ---- tier / manifest rows ---- */
 
 .tier {
+  background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 1.5rem 1.6rem;
   margin-bottom: 1.25rem;
 }
@@ -324,7 +343,7 @@ input[type="email"]:focus, input[type="password"]:focus {
   align-items: baseline;
   margin-bottom: 0.9rem;
 }
-.tier-name .price { color: var(--brass); font-weight: 400; font-size: 0.85rem; }
+.tier-name .price { color: var(--brass-dim); font-weight: 400; font-size: 0.85rem; }
 .tier ul {
   list-style: none;
   margin: 0;
@@ -333,9 +352,9 @@ input[type="email"]:focus, input[type="password"]:focus {
 }
 .tier li {
   padding: 0.4rem 0;
-  color: var(--paper-dim);
+  color: var(--ink-dim);
 }
-.tier li.included { color: var(--paper); }
+.tier li.included { color: var(--ink); }
 .tier li.included::before { content: '✓ '; color: var(--verified); font-family: var(--font-mono); }
 .tier li.soon::after { content: ' — coming soon'; color: var(--brass-dim); font-size: 0.85em; }
 
@@ -351,12 +370,12 @@ input[type="email"]:focus, input[type="password"]:focus {
   font-size: 0.92rem;
 }
 .manifest-row:first-of-type { border-top: none; }
-.manifest-row .k { color: var(--paper-dim); }
-.manifest-row .v { color: var(--paper); text-align: right; }
+.manifest-row .k { color: var(--ink-dim); }
+.manifest-row .v { color: var(--ink); text-align: right; }
 .manifest-row .v.status-active { color: var(--verified); }
-.manifest-row .v.status-none { color: var(--paper-dim); }
+.manifest-row .v.status-none { color: var(--ink-dim); }
 .manifest-row code {
-  background: var(--surface);
+  background: var(--surface-alt);
   padding: 0.2rem 0.5rem;
   border-radius: 3px;
   font-size: 0.85rem;
@@ -364,7 +383,7 @@ input[type="email"]:focus, input[type="password"]:focus {
 
 .hint {
   font-size: 0.9rem;
-  color: var(--paper-dim);
+  color: var(--ink-dim);
   margin-top: -0.4rem;
 }
 
@@ -374,7 +393,7 @@ input[type="email"]:focus, input[type="password"]:focus {
   border: none;
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--paper-dim);
+  color: var(--ink-dim);
   cursor: pointer;
   padding: 0;
 }
