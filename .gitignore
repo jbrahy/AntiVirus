@@ -17,3 +17,8 @@
 
 # Git worktrees
 .worktrees/
+
+# Secrets — never commit
+credentials.md
+.env
+web/.env
