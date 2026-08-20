@@ -97,7 +97,7 @@ func runHeartbeat(out io.Writer, stats *watchStats, interval time.Duration, stop
 func runWatch(cmd *cobra.Command, args []string) error {
 	db := dbFromCmd(cmd)
 	stats := &watchStats{}
-	handler := newFileHandler(db, notify.MacOSNotifier{}, cmd.ErrOrStderr(), stats)
+	handler := newFileHandler(db, notify.Default(), cmd.ErrOrStderr(), stats)
 
 	// Pre-validate paths so the startup message reports how many paths
 	// actually exist and will be watched, not just how many were passed.

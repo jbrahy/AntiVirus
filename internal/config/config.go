@@ -6,11 +6,11 @@ import (
 )
 
 func AppDir() (string, error) {
-	home, err := os.UserHomeDir()
+	dir, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, "Library", "Application Support", "avtool"), nil
+	return filepath.Join(dir, "avtool"), nil
 }
 
 func DBPath() (string, error) {
