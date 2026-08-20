@@ -1,27 +1,64 @@
 <!-- web/templates/dashboard.html -->
 <!doctype html>
-<html>
-<head><title>Dashboard — avtool</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
-  <h1>Your avtool account</h1>
-  <p>Signed in as {{.Email}}</p>
-  <form method="post" action="/logout"><button type="submit">Log out</button></form>
+  <div class="topbar">
+    <a class="brand" href="/">NexGuard<span class="dot">.</span></a>
+    <nav>
+      <span class="dim mono">{{.Email}}</span>
+      <form class="logout-form" method="post" action="/logout"><button type="submit">Log out</button></form>
+    </nav>
+  </div>
 
-  <h2>Subscription</h2>
-  {{if .HasSubscription}}
-    <p>Status: {{.SubscriptionStatus}}</p>
-  {{else}}
-    <p>No active subscription. <a href="/checkout">Subscribe</a></p>
-  {{end}}
+  <main class="container">
+    <section class="hero">
+      <p class="label">§ Account manifest</p>
+      <h1>Your account</h1>
+    </section>
 
-  <h2>License key</h2>
-  {{if .LicenseKey}}
-    <p><code>{{.LicenseKey}}</code></p>
-  {{else}}
-    <p>No license key yet — subscribe to get one.</p>
-  {{end}}
+    <section class="section">
+      <p class="label">Subscription</p>
+      <div class="manifest-row">
+        <span class="k">status</span>
+        {{if .HasSubscription}}
+          <span class="v status-active">{{.SubscriptionStatus}}</span>
+        {{else}}
+          <span class="v status-none">none</span>
+        {{end}}
+      </div>
+      {{if not .HasSubscription}}
+        <p class="hint">No active subscription yet.</p>
+        <div class="cta-row" style="margin-top: 1rem;">
+          <a class="btn btn-primary" href="/checkout">Subscribe</a>
+        </div>
+      {{end}}
+    </section>
 
-  <h2>Machines</h2>
-  <p>No machines yet. Fleet reporting is coming soon.</p>
+    <section class="section">
+      <p class="label">License key</p>
+      {{if .LicenseKey}}
+        <div class="manifest-row">
+          <span class="k">key</span>
+          <span class="v"><code>{{.LicenseKey}}</code></span>
+        </div>
+      {{else}}
+        <p class="hint">No license key yet — subscribe to get one.</p>
+      {{end}}
+    </section>
+
+    <section class="section">
+      <p class="label">Machines</p>
+      <p class="hint">No machines reporting in yet. Fleet status is coming soon.</p>
+    </section>
+  </main>
 </body>
 </html>

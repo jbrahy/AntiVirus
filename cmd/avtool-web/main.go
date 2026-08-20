@@ -24,6 +24,8 @@ func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux
 		w.Write([]byte("ok"))
 	})
 
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
+
 	r.Group(func(r chi.Router) {
 		r.Use(auth.OptionalAuth(db))
 		r.Get("/", handlers.Landing(db, tmpl))

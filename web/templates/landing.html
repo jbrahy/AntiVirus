@@ -1,18 +1,124 @@
 <!-- web/templates/landing.html -->
 <!doctype html>
-<html>
-<head><title>avtool</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexGuard — a hash matches, or it doesn't</title>
+  <meta name="description" content="NexGuard scans your Mac for files whose SHA-256 fingerprint exactly matches a known-malicious sample. No heuristics, no guessing — verified matches against a maintained hash ledger.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
-  <h1>avtool</h1>
-  <p>avtool scans your Mac for files matching known-malicious SHA256
-  hashes, pulled from a public threat intelligence feed. It is a
-  known-threat hash scanner — it does not use heuristics or behavioral
-  detection, so it will not catch malware that isn't byte-identical to
-  a sample already in its hash database. Pair it with, not instead of,
-  your existing security tools.</p>
-  <p><a href="https://github.com/jbrahy/AntiVirus">avtool is free and
-  open source.</a> A paid subscription adds a premium curated threat
-  feed, a multi-machine fleet dashboard, and priority support.</p>
-  <p><a href="/signup">Sign up</a> | <a href="/login">Log in</a></p>
+  <div class="topbar">
+    <a class="brand" href="/">NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <p class="label">§ 00 — Live check</p>
+      <h1>A hash matches, or it doesn't.</h1>
+      <p class="lede">NexGuard scans your Mac for files whose SHA-256 fingerprint
+      exactly matches a known-malicious sample, pulled from a maintained
+      threat-intel feed. No heuristics, no behavioral guessing — a verified
+      match, or nothing.</p>
+
+      <div class="ledger" aria-hidden="true">
+        <div class="ledger-row">
+          <span class="ledger-file">installer.dmg</span>
+          <span class="ledger-hash typing">275a021bbfb6489e54d471899f7db9d1663fc69&hellip;</span>
+          <span class="ledger-verdict clean">clean</span>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-file">update.pkg</span>
+          <span class="ledger-hash">e3b0c44298fc1c149afbf4c8996fb92427ae41e&hellip;</span>
+          <span class="ledger-verdict flagged">flagged</span>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/signup">Get NexGuard</a>
+        <a class="btn btn-secondary" href="https://github.com/jbrahy/AntiVirus">View source on GitHub</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="label">§ 01 — How it works</p>
+      <h2>The ledger, not a guess</h2>
+      <p>NexGuard is built on <code>avtool</code>, a free, open-source
+      command-line scanner. Point it at a file or a folder and it computes
+      the SHA-256 fingerprint of every file, then checks that fingerprint
+      against a local hash database — a manually-curated list plus a
+      synced public threat feed. A match means the file is byte-identical
+      to a known-bad sample. No match means exactly that: no match, not a
+      clean bill of health.</p>
+      <p>You can also run <code>avtool watch</code> to keep an eye on a
+      folder in real time — your Downloads, say — and review anything it
+      catches with <code>avtool review</code>.</p>
+    </section>
+
+    <section class="section">
+      <p class="label">§ 02 — What this is, what it isn't</p>
+      <h2>We'd rather undersell this</h2>
+      <p class="dim">Most security tools promise more than a hash check can
+      deliver. NexGuard doesn't.</p>
+      <div class="compare">
+        <div class="compare-col does">
+          <h3>NexGuard does</h3>
+          <ul>
+            <li>Catch files that exactly match a known-malicious hash</li>
+            <li>Stay open source — read every line at the link above</li>
+            <li>Sync a curated threat feed on your schedule</li>
+            <li>Pair cleanly alongside whatever you already run</li>
+          </ul>
+        </div>
+        <div class="compare-col not">
+          <h3>NexGuard doesn't</h3>
+          <ul>
+            <li>Use heuristics or behavioral detection</li>
+            <li>Catch malware modified even slightly from a known sample</li>
+            <li>Replace a full antivirus suite</li>
+            <li>Promise anything a hash match can't back up</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="label">§ 03 — Free and paid</p>
+      <h2>The scanner is free. The rest is optional.</h2>
+      <div class="tier">
+        <div class="tier-name"><span>Open source</span><span class="price">$0</span></div>
+        <ul>
+          <li class="included">The <code>avtool</code> CLI, MIT licensed</li>
+          <li class="included">Unlimited local scans and real-time watching</li>
+          <li class="included">Manual sync against the public threat feed</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-name"><span>NexGuard subscription</span><span class="price">Priced at signup</span></div>
+        <ul>
+          <li class="included">Everything in Open source</li>
+          <li class="included">Priority support from a real person</li>
+          <li class="soon">A premium, more frequently updated threat feed</li>
+          <li class="soon">A dashboard for checking status across every machine you run NexGuard on</li>
+        </ul>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/signup">Get NexGuard</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Built on the open-source <a href="https://github.com/jbrahy/AntiVirus">avtool</a> scanner.
+    Install it yourself: <code>go install github.com/jbrahy/AntiVirus/cmd/avtool@latest</code></p>
+  </footer>
 </body>
 </html>

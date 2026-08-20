@@ -1,14 +1,44 @@
 <!-- web/templates/signup.html -->
 <!doctype html>
-<html>
-<head><title>Sign up — avtool</title></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
-  <h1>Create your avtool account</h1>
-  {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
-  <form method="post" action="/signup">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Sign up</button>
-  </form>
+  <div class="topbar">
+    <a class="brand" href="/">NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in instead</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <p class="label">§ Account</p>
+      <h1>Create your account</h1>
+      <p class="lede dim">Free to sign up. Subscribe from your dashboard
+      whenever you're ready.</p>
+
+      {{if .Error}}<p class="error-banner">{{.Error}}</p>{{end}}
+
+      <form method="post" action="/signup">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" name="email" required autofocus>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" required minlength="8">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Create account</button>
+      </form>
+    </section>
+  </main>
 </body>
 </html>
