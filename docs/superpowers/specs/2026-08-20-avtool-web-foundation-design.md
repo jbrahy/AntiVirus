@@ -86,10 +86,11 @@ the CLI's local per-machine database.
 The one endpoint the avtool CLI itself will call (`/api/v1/license/validate`)
 authenticates via an `X-API-Key` header (the license key itself, for this
 endpoint) compared with `crypto/subtle.ConstantTimeCompare`, JSON request/
-response bodies, and a `401` with a JSON `{"success":false,"error":"..."}`
-body on auth failure. This mirrors an existing, proven pattern used
-elsewhere in this organization's infrastructure for machine-to-machine
-authenticated endpoints.
+response bodies, a `200` with a JSON `{"valid": true, "tier": "..."}` body
+on success, and a `401` with a JSON `{"valid": false, "error": "..."}` body
+on auth failure. This mirrors an existing, proven pattern used elsewhere in
+this organization's infrastructure for machine-to-machine authenticated
+endpoints.
 
 ### Configuration
 

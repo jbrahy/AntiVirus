@@ -1197,7 +1197,7 @@ func TestHandleWebhookRejectsBadSignature(t *testing.T) {
 }
 ```
 
-Write additional test(s) covering a valid signed `customer.subscription.created`/`.updated` event driving a `subscriptions` row upsert, using whatever test-signature-generation helper the resolved Stripe SDK version provides — consult its package docs (`go doc github.com/stripe/stripe-go/vNN/webhook`) for the exact helper and payload shape, since this varies slightly by SDK version and can't be pinned exactly in this plan. Document what you found and used in your report. Since `upsertSubscription` looks up the user by `users.stripe_customer_id`, this test must first insert a `users` row with a known `stripe_customer_id` (e.g. `INSERT INTO users (email, password_hash, stripe_customer_id) VALUES (...)`) matching the `customer` id in the synthetic event payload — otherwise the lookup will correctly fail with "no such user," which is the right behavior for an event about an unknown customer, but not what this particular test is trying to exercise.
+Write additional test(s) covering a valid signed `customer.subscription.created`/`.updated` event driving a `subscriptions` row upsert, using whatever test-signature-generation helper the resolved Stripe SDK version provides — consult its package docs (`go doc github.com/stripe/stripe-go/vNN/webhook`) for the exact helper and payload shape, since this varies slightly by SDK version and can't be pinned exactly in this plan. Document what you found and used in your report. Since `upsertSubscription` looks up the user by `users.stripe_customer_id`, this test must first insert a `users` row with a known `stripe_customer_id` (e.g. `INSERT INTO users (email, password_hash, stripe_customer_id) VALUES (...)`) matching the `customer` id in the synthetic event payload — otherwise the lookup will correctly fail with "no such user," which is the right behavior for an event about an unknown customer, but not what this particular test is trying to exercise. If the synthetic event's `status` is `"active"`, also assert that a row now exists in `licenses` for that user (querying `COUNT(*) FROM licenses WHERE user_id = ?`), and write a second test where the same event fires twice (e.g. `created` then `updated`, both `active`) asserting exactly one license row exists afterward, not two — this is the behavior that guards against regenerating a license on every webhook retry/update.
 
 - [ ] **Step 3: Run test to verify it fails**
 
@@ -1328,6 +1328,18 @@ func upsertSubscription(db *sql.DB, sub *stripe.Subscription) error {
 	if err != nil {
 		return fmt.Errorf("upserting subscription: %w", err)
 	}
+
+	if string(sub.Status) == "active" {
+		var existing int
+		if err := db.QueryRow(`SELECT COUNT(*) FROM licenses WHERE user_id = ? AND revoked_at IS NULL`, userID).Scan(&existing); err != nil {
+			return fmt.Errorf("checking existing licenses: %w", err)
+		}
+		if existing == 0 {
+			if _, err := license.Generate(db, userID); err != nil {
+				return fmt.Errorf("generating license: %w", err)
+			}
+		}
+	}
 	return nil
 }
 
@@ -1340,10 +1352,12 @@ func cancelSubscription(db *sql.DB, stripeSubscriptionID string) error {
 }
 ```
 
+**Note on `sub.CurrentPeriodEnd`:** Stripe has been migrating period-end data from the `Subscription` object onto `SubscriptionItem` in newer API versions — if the resolved SDK version doesn't have `CurrentPeriodEnd` directly on `stripe.Subscription`, check `sub.Items.Data[0].CurrentPeriodEnd` instead (or whatever the resolved version's equivalent is) and adjust `upsertSubscription` accordingly. Confirm via `go doc github.com/stripe/stripe-go/vNN.Subscription` before assuming the field exists where this plan's sample code puts it.
+
 - [ ] **Step 6: Run test to verify it passes**
 
 Run: `go test ./internal/web/billing/... -v`
-Expected: PASS (or SKIP without a reachable test MariaDB) — including after resolving the schema gap above.
+Expected: PASS (or SKIP without a reachable test MariaDB)
 
 - [ ] **Step 7: Commit**
 

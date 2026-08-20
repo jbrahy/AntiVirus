@@ -1,0 +1,27 @@
+<!-- web/templates/dashboard.html -->
+<!doctype html>
+<html>
+<head><title>Dashboard — avtool</title></head>
+<body>
+  <h1>Your avtool account</h1>
+  <p>Signed in as {{.Email}}</p>
+  <form method="post" action="/logout"><button type="submit">Log out</button></form>
+
+  <h2>Subscription</h2>
+  {{if .HasSubscription}}
+    <p>Status: {{.SubscriptionStatus}}</p>
+  {{else}}
+    <p>No active subscription. <a href="/checkout">Subscribe</a></p>
+  {{end}}
+
+  <h2>License key</h2>
+  {{if .LicenseKey}}
+    <p><code>{{.LicenseKey}}</code></p>
+  {{else}}
+    <p>No license key yet — subscribe to get one.</p>
+  {{end}}
+
+  <h2>Machines</h2>
+  <p>No machines yet. Fleet reporting is coming soon.</p>
+</body>
+</html>

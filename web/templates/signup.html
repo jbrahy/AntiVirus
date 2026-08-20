@@ -1,0 +1,14 @@
+<!-- web/templates/signup.html -->
+<!doctype html>
+<html>
+<head><title>Sign up — avtool</title></head>
+<body>
+  <h1>Create your avtool account</h1>
+  {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+  <form method="post" action="/signup">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Sign up</button>
+  </form>
+</body>
+</html>
