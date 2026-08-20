@@ -43,13 +43,30 @@
       </div>
 
       <div class="cta-row">
-        <a class="btn btn-primary" href="/signup">Get NexGuard</a>
+        <a class="btn btn-primary" href="https://github.com/jbrahy/AntiVirus/releases/latest">Download free</a>
         <a class="btn btn-secondary" href="https://github.com/jbrahy/AntiVirus">View source on GitHub</a>
       </div>
     </section>
 
     <section class="section">
-      <p class="label">§ 01 — How it works</p>
+      <p class="label">§ 01 — Why open source</p>
+      <h2>Protected, not monitored</h2>
+      <p class="dim">Most antivirus software asks you to trust a black box
+      running on your machine, watching your files, and reporting who
+      knows what back to who knows where. NexGuard doesn't ask for that
+      trust — it doesn't need to.</p>
+      <p>Every line of <code>avtool</code> is public. You don't have to
+      take a vendor's word for what it does; you or anyone else can read
+      it, build it from source, or watch it in a network monitor while
+      it runs. The only outbound call it ever makes is a plain
+      <code>GET</code> to pull down the public hash list. It never
+      uploads a file, a filename, or anything about what's on your
+      machine — there's no telemetry to disable because there's no
+      telemetry to write.</p>
+    </section>
+
+    <section class="section">
+      <p class="label">§ 02 — How it works</p>
       <h2>The ledger, not a guess</h2>
       <p>NexGuard is built on <code>avtool</code>, a free, open-source
       command-line scanner. Point it at a file or a folder and it computes
@@ -64,7 +81,7 @@
     </section>
 
     <section class="section">
-      <p class="label">§ 02 — What this is, what it isn't</p>
+      <p class="label">§ 03 — What this is, what it isn't</p>
       <h2>We'd rather undersell this</h2>
       <p class="dim">Most security tools promise more than a hash check can
       deliver. NexGuard doesn't.</p>
@@ -76,6 +93,7 @@
             <li>Stay open source — read every line at the link above</li>
             <li>Sync a curated threat feed on your schedule</li>
             <li>Pair cleanly alongside whatever you already run</li>
+            <li>Report to you, and only to you</li>
           </ul>
         </div>
         <div class="compare-col not">
@@ -91,7 +109,7 @@
     </section>
 
     <section class="section">
-      <p class="label">§ 03 — Free and paid</p>
+      <p class="label">§ 04 — Free and paid</p>
       <h2>The scanner is free. The rest is optional.</h2>
       <div class="tier">
         <div class="tier-name"><span>Open source</span><span class="price">$0</span></div>
@@ -100,18 +118,21 @@
           <li class="included">Unlimited local scans and real-time watching</li>
           <li class="included">Manual sync against the public threat feed</li>
         </ul>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="https://github.com/jbrahy/AntiVirus/releases/latest">Download free</a>
+        </div>
       </div>
       <div class="tier">
-        <div class="tier-name"><span>NexGuard subscription</span><span class="price">Priced at signup</span></div>
+        <div class="tier-name"><span>NexGuard subscription</span><span class="price">$10/month</span></div>
         <ul>
           <li class="included">Everything in Open source</li>
           <li class="included">Priority support from a real person</li>
           <li class="soon">A premium, more frequently updated threat feed</li>
           <li class="soon">A dashboard for checking status across every machine you run NexGuard on</li>
         </ul>
-      </div>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="/signup">Get NexGuard</a>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/signup">Subscribe — $10/month</a>
+        </div>
       </div>
     </section>
   </main>
