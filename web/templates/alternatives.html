@@ -1,0 +1,93 @@
+<!-- web/templates/alternatives.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexGuard vs. the Alternatives</title>
+  <meta name="description" content="How NexGuard compares to Norton, Avast/AVG, Malwarebytes, Bitdefender, Intego, and ClamAV on the things you can actually verify: open source or not, what the free tier includes, and pricing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/alternatives">Alternatives</a>
+      <a href="/articles">Field Notes</a>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ Alternatives</p>
+      <h1>NexGuard vs. the alternatives</h1>
+      <p class="lede dim">Not a ranking by detection rate &mdash; nobody outside
+      an independent testing lab can honestly claim that, us included. This is
+      a comparison on the things you can actually check yourself: whether the
+      code is public, what the free tier really includes, and how each
+      company prices it.</p>
+    </section>
+
+    <section class="section">
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Open source</th>
+              <th>Free tier includes</th>
+              <th>Pricing</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Competitors}}
+            <tr{{if eq .Name "NexGuard"}} class="is-nexguard"{{end}}>
+              <td>{{.Name}}</td>
+              <td>{{if .OpenSource}}<span class="yes">Yes</span>{{else}}<span class="no">No</span>{{end}}</td>
+              <td>{{.FreeTier}}</td>
+              <td>{{.Pricing}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="compare-notes">
+        {{range .Competitors}}
+        {{if .Note}}
+        <p class="compare-note"><strong>{{.Name}}.</strong> {{.Note}}{{if .NoteSource}} <a href="{{.NoteSource}}">Source.</a>{{end}}</p>
+        {{end}}
+        {{end}}
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="label">§ Why this list exists</p>
+      <h2>You shouldn't have to trust a comparison page either</h2>
+      <p>Every other company on this list, ClamAV aside, is asking you to
+      trust a closed-source program with deep access to your files based on
+      a privacy policy and a marketing claim. We think that's a strange
+      thing to ask of security software specifically, the one category of
+      program where the stakes of "just trust us" are highest. NexGuard's
+      code is public specifically so this comparison, and every claim on
+      this site, is something you can check instead of something you have
+      to take on faith.</p>
+      <p>ClamAV proves open source isn't unique to NexGuard. What's
+      different is the rest of the row: a maintained premium feed, a
+      dashboard, and support from a person, without ever closing the
+      source to get there.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/reach-x/nexguard/releases/latest">Download free</a>
+        <a class="btn btn-secondary" href="https://github.com/reach-x/nexguard">View source on GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  {{template "sitefooter" .Site}}
+</body>
+</html>

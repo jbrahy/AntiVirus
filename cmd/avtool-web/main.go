@@ -36,6 +36,7 @@ func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux
 	r.Get("/terms", handlers.StaticPage(tmpl, "terms.html"))
 	r.Get("/articles", handlers.ArticlesIndex(tmpl))
 	r.Get("/articles/{slug}", handlers.ArticleShow(tmpl))
+	r.Get("/alternatives", handlers.Alternatives(tmpl))
 
 	r.Get("/signup", handlers.SignupPage(db, tmpl))
 	r.Post("/signup", handlers.SignupPage(db, tmpl))

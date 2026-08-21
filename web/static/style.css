@@ -586,3 +586,45 @@ input[type="email"]:focus, input[type="password"]:focus {
   margin-bottom: 1.8rem;
 }
 .article p { max-width: 65ch; }
+
+/* ---- alternatives comparison table ---- */
+
+.compare-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  background: var(--surface);
+}
+.compare-table th, .compare-table td {
+  text-align: left;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+.compare-table td:nth-child(3) { white-space: normal; min-width: 18ch; }
+.compare-table th {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass-dim);
+  background: var(--surface-alt);
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table tr.is-nexguard { background: var(--surface-alt); }
+.compare-table tr.is-nexguard td:first-child { font-weight: 600; color: var(--shield); }
+.compare-table .yes { color: var(--verified); font-weight: 600; }
+.compare-table .no { color: var(--ink-dim); }
+
+.compare-notes { margin-top: 1.5rem; }
+.compare-note {
+  font-size: 0.92rem;
+  color: var(--ink-dim);
+  max-width: 68ch;
+}
+.compare-note strong { color: var(--ink); }
