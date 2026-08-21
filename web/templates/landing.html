@@ -5,42 +5,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NexGuard — a hash matches, or it doesn't</title>
-  <meta name="description" content="NexGuard scans your Mac for files whose SHA-256 fingerprint exactly matches a known-malicious sample. No heuristics, no guessing — verified matches against a maintained hash ledger.">
+  <meta name="description" content="NexGuard is an open-source malware scanner you can actually audit — read the code, not just trust the vendor. Free forever, or subscribe for more.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="topbar">
-    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
-    <nav>
-      <a href="/login">Log in</a>
-      <a href="/signup">Sign up</a>
+  <section class="hero-cinematic">
+    <nav class="hero-nav">
+      <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+      <div class="hero-nav-links">
+        <a href="/login">Log in</a>
+        <a href="/signup">Sign up</a>
+      </div>
     </nav>
-  </div>
 
-  <main class="container">
-    <section class="hero">
-      <p class="label">§ 00 — Live check</p>
+    <div class="hero-cinematic-content">
       <h1>A hash matches, or it doesn't.</h1>
-      <p class="lede">NexGuard scans your Mac for files whose SHA-256 fingerprint
-      exactly matches a known-malicious sample, pulled from a maintained
-      threat-intel feed. No heuristics, no behavioral guessing — a verified
-      match, or nothing.</p>
+      <p class="lede">Every other antivirus vendor asks you to trust a black
+      box on your machine. NexGuard doesn't ask — move your cursor over it.</p>
 
-      <div class="ledger" aria-hidden="true">
-        <div class="ledger-row">
-          <span class="ledger-file">installer.dmg</span>
-          <span class="ledger-hash typing">275a021bbfb6489e54d471899f7db9d1663fc69&hellip;</span>
-          <span class="ledger-verdict clean">clean</span>
+      <div class="reveal-stage" id="revealStage">
+        <div class="reveal-base" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+          </svg>
+          <p class="reveal-base-label">Trust us.<span>That's what every other vendor asks.</span></p>
         </div>
-        <div class="ledger-row">
-          <span class="ledger-file">update.pkg</span>
-          <span class="ledger-hash">e3b0c44298fc1c149afbf4c8996fb92427ae41e&hellip;</span>
-          <span class="ledger-verdict flagged">flagged</span>
+        <div class="reveal-layer" id="revealLayer">
+          <div class="ledger" aria-hidden="true">
+            <div class="ledger-row">
+              <span class="ledger-file">installer.dmg</span>
+              <span class="ledger-hash">275a021bbfb6489e54d471899f7db9d1663fc69&hellip;</span>
+              <span class="ledger-verdict clean">clean</span>
+            </div>
+            <div class="ledger-row">
+              <span class="ledger-file">update.pkg</span>
+              <span class="ledger-hash">e3b0c44298fc1c149afbf4c8996fb92427ae41e&hellip;</span>
+              <span class="ledger-verdict flagged">flagged</span>
+            </div>
+          </div>
         </div>
       </div>
+      <p class="reveal-hint">This is what's actually running — read the rest of it on GitHub.</p>
 
       <div class="cta-row">
         <a class="btn btn-primary" href="https://github.com/reach-x/nexguard/releases/latest">Download free</a>
@@ -53,8 +62,10 @@
         <a href="https://github.com/reach-x/nexguard/issues" aria-label="Open issues"><img src="https://img.shields.io/github/issues/reach-x/nexguard?style=flat-square&amp;color=55647f&amp;label=issues" alt="Open issues" width="98" height="20"></a>
         <a href="https://github.com/reach-x/nexguard/blob/main/LICENSE" aria-label="License"><img src="https://img.shields.io/github/license/reach-x/nexguard?style=flat-square&amp;color=1f9d55&amp;label=license" alt="MIT license" width="98" height="20"></a>
       </div>
-    </section>
+    </div>
+  </section>
 
+  <main class="container">
     <section class="section">
       <p class="label">§ 01 — Why open source</p>
       <h2>Protected, not monitored</h2>
@@ -74,49 +85,7 @@
     </section>
 
     <section class="section">
-      <p class="label">§ 02 — How it works</p>
-      <h2>The ledger, not a guess</h2>
-      <p><code>avtool</code>, NexGuard's scanner, computes the SHA-256
-      fingerprint of every file you point it at, then checks that
-      fingerprint against a hash database that NexGuard Labs curates and
-      maintains. A match means the file is byte-identical to a known-bad
-      sample. No match means exactly that: no match, not a clean bill of
-      health.</p>
-      <p>You can also run <code>avtool watch</code> to keep an eye on a
-      folder in real time — your Downloads, say — and review anything it
-      catches with <code>avtool review</code>.</p>
-    </section>
-
-    <section class="section">
-      <p class="label">§ 03 — What this is, what it isn't</p>
-      <h2>We'd rather undersell this</h2>
-      <p class="dim">Most security tools promise more than a hash check can
-      deliver. NexGuard doesn't.</p>
-      <div class="compare">
-        <div class="compare-col does">
-          <h3>NexGuard does</h3>
-          <ul>
-            <li>Catch files that exactly match a known-malicious hash</li>
-            <li>Stay open source — read every line at the link above</li>
-            <li>Sync a curated threat feed on your schedule</li>
-            <li>Pair cleanly alongside whatever you already run</li>
-            <li>Report to you, and only to you</li>
-          </ul>
-        </div>
-        <div class="compare-col not">
-          <h3>NexGuard doesn't</h3>
-          <ul>
-            <li>Use heuristics or behavioral detection</li>
-            <li>Catch malware modified even slightly from a known sample</li>
-            <li>Replace a full antivirus suite</li>
-            <li>Promise anything a hash match can't back up</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <p class="label">§ 04 — Free and paid</p>
+      <p class="label">§ 02 — Free and paid</p>
       <h2>The scanner is free. The rest is optional.</h2>
       <div class="tier">
         <div class="tier-name"><span>Open source</span><span class="price">$0</span></div>
@@ -145,5 +114,6 @@
   </main>
 
   {{template "sitefooter" .Site}}
+  <script src="/static/reveal.js"></script>
 </body>
 </html>

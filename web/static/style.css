@@ -239,6 +239,143 @@ footer a:hover { color: var(--shield); }
 }
 .badges img { display: block; }
 
+/* ---- cinematic hero + cursor reveal (landing page only) ----
+   Signature element: everything else on this page is the bright shield
+   theme. This section is the one deliberate dark, cinematic moment, and
+   it argues the site's whole pitch physically: a "trust us" black box
+   that a visitor has to move their own cursor to see through — the same
+   thing open-sourcing avtool does, just made literal. */
+
+.hero-cinematic {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(120% 100% at 50% -10%, #17233f 0%, #0a0f1c 55%, #060910 100%);
+  color: #eef2fb;
+  overflow: hidden;
+}
+
+.hero-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem var(--pad) 0;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-nav .brand {
+  color: #eef2fb;
+}
+.hero-nav .brand:hover { color: #eef2fb; }
+.hero-nav .brand .dot { color: var(--brass); }
+.hero-nav-links {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.hero-nav-links a { color: rgba(238, 242, 251, 0.7); text-decoration: none; }
+.hero-nav-links a:hover { color: #eef2fb; }
+
+.hero-cinematic-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem;
+  padding: 2.5rem var(--pad) 3.5rem;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  width: 100%;
+}
+.hero-cinematic h1 {
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  line-height: 1.1;
+  max-width: 18ch;
+  color: #ffffff;
+}
+.hero-cinematic .lede {
+  color: rgba(238, 242, 251, 0.68);
+  max-width: 46ch;
+  margin: -1rem 0 0;
+}
+
+.reveal-stage {
+  position: relative;
+  width: min(560px, 88vw);
+  height: min(280px, 42vh);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(238, 242, 251, 0.12);
+  box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.6);
+  --mx: 50%;
+  --my: 50%;
+}
+.reveal-base,
+.reveal-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.reveal-base {
+  background: linear-gradient(160deg, #0d1526, #161f36);
+  color: rgba(238, 242, 251, 0.45);
+}
+.reveal-base svg { opacity: 0.8; }
+.reveal-base-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+}
+.reveal-base-label span {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(238, 242, 251, 0.35);
+  margin-top: 0.3rem;
+}
+.reveal-layer {
+  background: var(--surface);
+  padding: 0 1.5rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  -webkit-mask-image: radial-gradient(140px circle at var(--mx) var(--my), #000 0%, #000 72%, transparent 88%);
+  mask-image: radial-gradient(140px circle at var(--mx) var(--my), #000 0%, #000 72%, transparent 88%);
+}
+.reveal-stage.active .reveal-layer { opacity: 1; }
+.reveal-layer .ledger {
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  width: 100%;
+}
+.reveal-hint {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: rgba(238, 242, 251, 0.4);
+  margin: -0.8rem 0 0;
+}
+
+.hero-cinematic .badges { justify-content: center; }
+
+@media (max-width: 30rem) {
+  .hero-nav-links { gap: 1rem; }
+}
+
 /* ---- buttons / forms ---- */
 
 .btn {
@@ -301,36 +438,6 @@ input[type="email"]:focus, input[type="password"]:focus {
   border-radius: 5px;
   padding: 0.7rem 0.9rem;
   margin-bottom: 1.3rem;
-}
-
-/* ---- comparison table (what nexguard is / isn't) ---- */
-
-.compare {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 1.75rem;
-}
-.compare-col h3 {
-  font-size: 0.9rem;
-  margin-bottom: 0.9rem;
-}
-.compare-col.does h3 { color: var(--verified); }
-.compare-col.not h3 { color: var(--flagged); }
-.compare-col ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.compare-col li {
-  padding: 0.5rem 0;
-  border-top: 1px solid var(--rule);
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-.compare-col li:first-of-type { border-top: none; }
-
-@media (max-width: 30rem) {
-  .compare { grid-template-columns: 1fr; gap: 1.5rem 0; }
 }
 
 /* ---- tier / manifest rows ---- */
