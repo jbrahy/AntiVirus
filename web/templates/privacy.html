@@ -1,0 +1,92 @@
+<!-- web/templates/privacy.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy &mdash; NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ Legal</p>
+      <h1>Privacy Policy</h1>
+
+      <p class="updated dim">Last updated: 21 August 2026</p>
+
+      <p>This policy explains what {{.LegalEntity}} collects when you use
+      NexGuard at {{.Domain}}, and what we do with it.</p>
+
+      <h2>Information We Collect</h2>
+      <p>When you create an account we collect your email address and a hash of
+      your password. If you choose to provide it, we also collect your mobile
+      phone number. Providing a phone number is optional and no part of the
+      service requires one.</p>
+      <p>If you subscribe, our payment processor collects and holds your payment
+      details. We never see or store your card number.</p>
+      <p>The NexGuard scanner running on your machine does not transmit your
+      files, your filenames, or any description of your machine's contents to
+      us. Its only outbound request is a download of the public hash list.</p>
+
+      <h2>How We Use Information Collected.</h2>
+      <p>We use your email address to operate your account, to send you
+      transactional messages about your subscription, and to answer you when you
+      contact us. We use your phone number only for the categories of text
+      message you specifically consented to at signup, and only if you gave us a
+      number.</p>
+      <p>No mobile information will be shared with third parties or affiliates
+      for marketing or promotional purposes. All categories above exclude text
+      messaging originator opt-in data and consent; this information will not be
+      shared with any third parties.</p>
+
+      <h2>Text Messaging</h2>
+      <p>Text message consent is collected separately for service notifications
+      and for marketing messages. Neither is required to create an account, to
+      subscribe, or to use any part of NexGuard. You can withdraw either consent
+      at any time by replying STOP to a message from us, or by emailing
+      <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a>. Message and data
+      rates may apply and message frequency varies.</p>
+
+      <h2>Information We Do Not Share</h2>
+      <p>We do not sell, rent, or trade your personal information. We do not
+      operate a lead generation business through NexGuard and we do not pass
+      your information to partners, affiliates, or advertisers. We disclose
+      information only to service providers who process it on our behalf under
+      contract (for example our payment processor and our hosting provider), or
+      where we are legally required to.</p>
+
+      <h2>Retention</h2>
+      <p>We keep account information for as long as your account exists. If you
+      close your account we delete your personal information within 90 days,
+      except where we are required to retain records of a transaction.</p>
+
+      <h2>Your Choices</h2>
+      <p>You may request access to, correction of, or deletion of your personal
+      information by emailing
+      <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a>. You may remove your
+      phone number from your account at any time without affecting your
+      subscription.</p>
+
+      <h2>Contact</h2>
+      <p>{{.LegalEntity}}<br>
+      {{.AddressLine}}<br>
+      {{.AddressCity}}<br>
+      {{.Phone}} &middot; <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a></p>
+    </section>
+  </main>
+
+  {{template "sitefooter" .}}
+</body>
+</html>

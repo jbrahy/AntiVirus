@@ -1,0 +1,109 @@
+<!-- web/templates/terms.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terms of Service &mdash; NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ Legal</p>
+      <h1>Terms of Service</h1>
+
+      <p class="updated dim">Last updated: 21 August 2026</p>
+
+      <p>These terms govern your use of NexGuard, operated by
+      {{.LegalEntity}} at {{.Domain}}.</p>
+
+      <h2>The Service</h2>
+      <p>NexGuard compares file fingerprints against a database of known
+      malicious sample hashes. It detects files that exactly match a known bad
+      sample. It does not use heuristics or behavioral detection, and it will
+      not catch malware that has been modified even slightly from a known
+      sample. NexGuard is not a replacement for a full antivirus suite and is
+      provided without any warranty that it will detect any particular threat.</p>
+
+      <h2>Accounts</h2>
+      <p>You are responsible for keeping your password confidential and for
+      activity under your account. Tell us promptly if you believe your account
+      has been compromised.</p>
+
+      <h2>Subscriptions and Billing</h2>
+      <p>The <code>avtool</code> command-line scanner is free and MIT licensed.
+      The NexGuard subscription is $10 per month, billed in advance and renewing
+      automatically until cancelled. You may cancel at any time from your
+      dashboard; cancellation takes effect at the end of the current billing
+      period and we do not prorate partial months.</p>
+
+      <h2>Mobile Terms of Service</h2>
+      <p><strong>Program name:</strong> NexGuard.</p>
+      <p><strong>Program description:</strong> NexGuard offers two separate text
+      message programs, each requiring its own express consent. The service
+      program sends account notifications, subscription and billing updates, and
+      alerts relating to scans on your machines. The marketing program sends
+      promotional messages about NexGuard. You may consent to either, both, or
+      neither.</p>
+      <p><strong>Consent is not required.</strong> Agreeing to receive text
+      messages is not a condition of creating an account, of purchasing a
+      subscription, or of using any part of NexGuard.</p>
+      <p><strong>Message frequency:</strong> Message frequency varies.</p>
+      <p><strong>Cost:</strong> Message and data rates may apply.</p>
+      <p><strong>How to opt out:</strong> Reply STOP to any message from us to
+      stop receiving texts. You will receive a single confirmation and no
+      further messages.</p>
+      <p><strong>How to get help:</strong> Reply HELP to any message, email
+      <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a>, or call
+      {{.Phone}}.</p>
+      <p><strong>Carriers:</strong> Carriers are not liable for delayed or
+      undelivered messages.</p>
+      <p><strong>Privacy:</strong> Your mobile number will not be shared with
+      third parties or affiliates. See our
+      <a href="/privacy">Privacy Policy</a>.</p>
+      <p><strong>Supported carriers:</strong> Message delivery is subject to
+      your carrier's coverage and support. Not all carriers support all message
+      types.</p>
+
+      <h2>Acceptable Use</h2>
+      <p>Do not use NexGuard to break the law, to attack or probe systems you do
+      not control, or to attempt to circumvent licensing or billing.</p>
+
+      <h2>Open Source</h2>
+      <p>The <code>avtool</code> scanner is licensed under the MIT license.
+      Those license terms govern your use of the source code, and nothing in
+      these terms restricts rights granted to you under that license.</p>
+
+      <h2>Limitation of Liability</h2>
+      <p>To the extent permitted by law, {{.LegalEntity}} is not liable for
+      indirect, incidental, or consequential damages, or for any loss arising
+      from malware that NexGuard did not detect. Our total liability is limited
+      to the amount you paid us in the twelve months before the claim.</p>
+
+      <h2>Changes</h2>
+      <p>We may update these terms. Material changes will be announced by email
+      to account holders before they take effect.</p>
+
+      <h2>Contact</h2>
+      <p>{{.LegalEntity}}<br>
+      {{.AddressLine}}<br>
+      {{.AddressCity}}<br>
+      {{.Phone}} &middot; <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a></p>
+    </section>
+  </main>
+
+  {{template "sitefooter" .}}
+</body>
+</html>

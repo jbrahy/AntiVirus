@@ -30,6 +30,11 @@ func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux
 		r.Use(auth.OptionalAuth(db))
 		r.Get("/", handlers.Landing(db, tmpl))
 	})
+	r.Get("/about", handlers.StaticPage(tmpl, "about.html"))
+	r.Get("/contact", handlers.StaticPage(tmpl, "contact.html"))
+	r.Get("/privacy", handlers.StaticPage(tmpl, "privacy.html"))
+	r.Get("/terms", handlers.StaticPage(tmpl, "terms.html"))
+
 	r.Get("/signup", handlers.SignupPage(db, tmpl))
 	r.Post("/signup", handlers.SignupPage(db, tmpl))
 	r.Get("/login", handlers.LoginPage(db, tmpl))

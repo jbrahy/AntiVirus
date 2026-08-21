@@ -7,7 +7,13 @@ import (
 	"net/http"
 
 	"github.com/jbrahy/AntiVirus/internal/web/auth"
+	"github.com/jbrahy/AntiVirus/internal/web/config"
 )
+
+// landingView carries the business identity the shared footer renders from.
+type landingView struct {
+	Site config.SiteInfo
+}
 
 // Landing renders the marketing landing page for anonymous visitors. A
 // visitor who already has a valid session (see auth.OptionalAuth, which
@@ -19,6 +25,6 @@ func Landing(db *sql.DB, tmpl *template.Template) http.HandlerFunc {
 			http.Redirect(w, r, "/dashboard", http.StatusFound)
 			return
 		}
-		tmpl.ExecuteTemplate(w, "landing.html", nil)
+		tmpl.ExecuteTemplate(w, "landing.html", landingView{Site: config.Site})
 	}
 }

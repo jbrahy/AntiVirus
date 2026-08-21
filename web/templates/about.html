@@ -1,0 +1,67 @@
+<!-- web/templates/about.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About &mdash; NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ About</p>
+      <h1>About</h1>
+
+      <p class="lede dim">NexGuard is a hash-based malware scanner for macOS,
+      operated by {{.LegalEntity}}.</p>
+
+      <h2>What we do</h2>
+      <p>NexGuard computes the SHA-256 fingerprint of files on your machine and
+      compares each one against a database of known-malicious sample hashes. A
+      match means the file is byte-identical to something already identified as
+      malware. No match means no match, which is not the same as a clean bill of
+      health. We say so plainly on the home page because overstating what a hash
+      check can do would be dishonest.</p>
+
+      <p>The scanner itself is <code>avtool</code>, released under the MIT
+      license. The source is public at
+      <a href="https://github.com/reach-x/nexguard">github.com/reach-x/nexguard</a>.
+      You do not have to take our word for what the software does; you can read
+      it, build it, or watch its network traffic while it runs.</p>
+
+      <h2>What we sell</h2>
+      <p>The command-line scanner is free and always will be. A paid
+      subscription at $10 per month adds a more frequently updated threat feed,
+      a dashboard covering every machine you run NexGuard on, and support from a
+      person. That subscription is our only revenue from this product.</p>
+
+      <h2>What we do not do</h2>
+      <p>We do not sell, rent, or share the personal information of NexGuard
+      users. We are not a lead generation service, we do not match you with
+      third parties, and we do not pass your details to anyone. The software
+      uploads no files, no filenames, and no information about the contents of
+      your machine. Its only outbound request is a plain download of the public
+      hash list.</p>
+
+      <h2>Who we are</h2>
+      <p>NexGuard is operated by {{.LegalEntity}}, {{.AddressLine}},
+      {{.AddressCity}}. You can reach us at {{.Phone}} or
+      <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a>.</p>
+    </section>
+  </main>
+
+  {{template "sitefooter" .}}
+</body>
+</html>

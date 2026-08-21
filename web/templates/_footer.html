@@ -1,0 +1,17 @@
+{{define "sitefooter"}}
+  <footer>
+    <p><strong>{{.LegalEntity}}</strong><br>
+    {{.AddressLine}}<br>
+    {{.AddressCity}}<br>
+    {{.Phone}} &middot; <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a></p>
+
+    <p><a href="/about">About</a> &middot;
+    <a href="/contact">Contact</a> &middot;
+    <a href="/privacy">Privacy Policy</a> &middot;
+    <a href="/terms">Terms of Service</a></p>
+
+    <p>Built on the open-source <a href="https://github.com/reach-x/nexguard">avtool</a> scanner.
+    Install it yourself: <code>go install github.com/jbrahy/AntiVirus/cmd/avtool@latest</code></p>
+    <p>Found a bug or want a feature? <a href="https://github.com/reach-x/nexguard/issues/new">Open an issue</a>.</p>
+  </footer>
+{{end}}

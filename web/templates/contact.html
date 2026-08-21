@@ -1,0 +1,58 @@
+<!-- web/templates/contact.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact &mdash; NexGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ Contact</p>
+      <h1>Contact</h1>
+
+      <p class="lede dim">A real address, a real phone number, and a mailbox a
+      person reads.</p>
+
+      <h2>By mail</h2>
+      <p>{{.LegalEntity}}<br>
+      {{.AddressLine}}<br>
+      {{.AddressCity}}</p>
+
+      <h2>By phone</h2>
+      <p><a href="tel:+18773532374">{{.Phone}}</a></p>
+
+      <h2>By email</h2>
+      <p><a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a></p>
+
+      <h2>Bug reports and feature requests</h2>
+      <p>The fastest route for anything technical is the issue tracker at
+      <a href="https://github.com/reach-x/nexguard/issues/new">github.com/reach-x/nexguard/issues</a>.
+      It is public, so you can see what has already been reported and what is
+      being worked on.</p>
+
+      <h2>Text messages</h2>
+      <p>If you have opted in to text messages from NexGuard, reply
+      <strong>STOP</strong> to any message to stop receiving them, or
+      <strong>HELP</strong> for help. You can also email us at
+      <a href="mailto:{{.SupportMail}}">{{.SupportMail}}</a> and we will remove
+      your number.</p>
+    </section>
+  </main>
+
+  {{template "sitefooter" .}}
+</body>
+</html>

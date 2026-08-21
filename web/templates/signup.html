@@ -36,6 +36,48 @@
           <label for="password">Password</label>
           <input id="password" type="password" name="password" required minlength="8">
         </div>
+        <div class="field">
+          <label for="phone">Mobile phone <span class="dim">(optional)</span></label>
+          <input id="phone" type="tel" name="phone" autocomplete="tel"
+                 inputmode="tel" placeholder="(555) 555-5555">
+          <p class="hint">Only needed if you want scan alerts or account
+          notifications by text. Leave it blank and nothing changes.</p>
+        </div>
+
+        <!--
+          Carrier compliance, per docs/carrier-compliance.md:
+          neither box carries `required`, they are unchecked by default, they
+          are separate (service vs marketing must never share one opt-in), and
+          each states its full disclosure on its own rather than inheriting one.
+        -->
+        <div class="consent">
+          <label class="consent-row">
+            <input type="checkbox" name="sms_service_consent" value="1">
+            <span>I give my express consent to receive recurring automated service
+            updates and account notifications texts to the phone number from
+            <strong>{{.Site.Brand}}</strong>. Message and data rates may apply.
+            Msg frequency varies. I understand I can opt-out by replying 'STOP'
+            to any message, or get more info by replying 'HELP.' Consent is not
+            required for purchasing products or services. My number will not be
+            shared with third parties or affiliates. View our
+            <a href="/terms">Terms of Services</a> and
+            <a href="/privacy">Privacy Policy</a>.</span>
+          </label>
+
+          <label class="consent-row">
+            <input type="checkbox" name="sms_marketing_consent" value="1">
+            <span>I give my express consent to receive recurring automated
+            marketing notification texts to the phone number from
+            <strong>{{.Site.Brand}}</strong>. Message and data rates may apply.
+            Msg frequency varies. I understand I can opt-out by replying 'STOP'
+            to any message, or get more info by replying 'HELP.' Consent is not
+            required for purchasing products or services. My number will not be
+            shared with third parties or affiliates. View our
+            <a href="/terms">Terms of Services</a> and
+            <a href="/privacy">Privacy Policy</a>.</span>
+          </label>
+        </div>
+
         <button class="btn btn-primary btn-block" type="submit">Create account</button>
       </form>
     </section>
