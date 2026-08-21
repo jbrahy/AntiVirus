@@ -77,6 +77,15 @@ code, .mono {
   padding: 0 var(--pad);
 }
 
+/* Wider than --max-w for content that needs the room, like the
+   alternatives comparison table, without widening the whole site's
+   reading column. */
+.container-wide {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
 .topbar {
   display: flex;
   align-items: baseline;
@@ -371,6 +380,15 @@ footer a:hover { color: var(--shield); }
 }
 
 .hero-cinematic .badges { justify-content: center; }
+
+.hero-cinematic .btn-secondary {
+  color: #eef2fb;
+  border-color: rgba(238, 242, 251, 0.35);
+}
+.hero-cinematic .btn-secondary:hover {
+  border-color: var(--brass);
+  color: #ffffff;
+}
 
 @media (max-width: 30rem) {
   .hero-nav-links { gap: 1rem; }
