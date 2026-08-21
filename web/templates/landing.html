@@ -58,30 +58,30 @@
     <section class="section">
       <p class="label">§ 01 — Why open source</p>
       <h2>Protected, not monitored</h2>
-      <p class="dim">Most antivirus software asks you to trust a black box
-      running on your machine, watching your files, and reporting who
-      knows what back to who knows where. NexGuard doesn't ask for that
-      trust — it doesn't need to.</p>
-      <p>Every line of <code>avtool</code> is public. You don't have to
-      take a vendor's word for what it does; you or anyone else can read
-      it, build it from source, or watch it in a network monitor while
-      it runs. The only outbound call it ever makes is a plain
-      <code>GET</code> to pull down the public hash list. It never
-      uploads a file, a filename, or anything about what's on your
-      machine — there's no telemetry to disable because there's no
-      telemetry to write.</p>
+      <p class="dim">Every other antivirus vendor asks you to trust a black
+      box running on your machine, watching your files, and reporting who
+      knows what back to who knows where. No one lets you check. NexGuard
+      does.</p>
+      <p>NexGuard Labs built <code>avtool</code>, our scanner, from the
+      ground up — and we publish every line of it. You don't have to take
+      our word for what it does; you or anyone else can read it, build it
+      yourself, or watch it in a network monitor while it runs. The only
+      outbound call it ever makes is a plain <code>GET</code> to pull down
+      the hash list. It never uploads a file, a filename, or anything about
+      what's on your machine — there's no telemetry to disable because
+      there's no telemetry to write. We open-sourced the scanner
+      specifically so that promise isn't just something we say.</p>
     </section>
 
     <section class="section">
       <p class="label">§ 02 — How it works</p>
       <h2>The ledger, not a guess</h2>
-      <p>NexGuard is built on <code>avtool</code>, a free, open-source
-      command-line scanner. Point it at a file or a folder and it computes
-      the SHA-256 fingerprint of every file, then checks that fingerprint
-      against a local hash database — a manually-curated list plus a
-      synced public threat feed. A match means the file is byte-identical
-      to a known-bad sample. No match means exactly that: no match, not a
-      clean bill of health.</p>
+      <p><code>avtool</code>, NexGuard's scanner, computes the SHA-256
+      fingerprint of every file you point it at, then checks that
+      fingerprint against a hash database that NexGuard Labs curates and
+      maintains. A match means the file is byte-identical to a known-bad
+      sample. No match means exactly that: no match, not a clean bill of
+      health.</p>
       <p>You can also run <code>avtool watch</code> to keep an eye on a
       folder in real time — your Downloads, say — and review anything it
       catches with <code>avtool review</code>.</p>
