@@ -541,3 +541,48 @@ input[type="email"]:focus, input[type="password"]:focus {
 .legal h2 { margin-top: 2rem; }
 .legal p, .legal li { line-height: 1.65; }
 .legal .updated { font-size: 0.8rem; }
+
+/* ---- field notes (articles) ---- */
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.article-card {
+  display: block;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1.4rem 1.6rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+.article-card:hover { border-color: var(--brass); text-decoration: none; }
+.article-card-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass-dim);
+  margin: 0 0 0.5rem;
+}
+.article-card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
+}
+.article-card p.dim { margin-bottom: 0; }
+
+.article .article-dek {
+  font-size: 1.05rem;
+  margin-bottom: 0.6rem;
+}
+.article .article-byline {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
+}
+.article p { max-width: 65ch; }

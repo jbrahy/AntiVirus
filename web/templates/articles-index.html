@@ -1,0 +1,46 @@
+<!-- web/templates/articles-index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field Notes &mdash; NexGuard</title>
+  <meta name="description" content="NexGuard Labs' reporting on the antivirus industry: detection methods, supply chain attacks, the ransomware economy, and what security software can and cannot promise.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/articles">Field Notes</a>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <section class="hero legal">
+      <p class="label">§ Field Notes</p>
+      <h1>Field Notes</h1>
+      <p class="lede dim">NexGuard Labs' reporting on the industry we work
+      in: how detection actually works, what it costs, and where it has
+      failed before.</p>
+    </section>
+
+    <section class="section article-list">
+      {{range .Articles}}
+      <a class="article-card" href="/articles/{{.Slug}}">
+        <p class="article-card-meta">{{.Section}} &middot; {{.Date}}</p>
+        <h2>{{.Title}}</h2>
+        <p class="dim">{{.Dek}}</p>
+      </a>
+      {{end}}
+    </section>
+  </main>
+
+  {{template "sitefooter" .Site}}
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!-- web/templates/articles-show.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Article.Title}} &mdash; NexGuard Field Notes</title>
+  <meta name="description" content="{{.Article.Dek}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/"><svg class="brand-mark" width="20" height="22" viewBox="0 0 20 22" aria-hidden="true"><path d="M10 1l8 3v6c0 5.5-3.5 9-8 11-4.5-2-8-5.5-8-11V4l8-3z" stroke="#2957a4" stroke-width="1.6" fill="#eef3fb"/><path d="M6.5 11l2.5 2.5 5-5" stroke="#c8912b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>NexGuard<span class="dot">.</span></a>
+    <nav>
+      <a href="/articles">Field Notes</a>
+      <a href="/login">Log in</a>
+      <a href="/signup">Sign up</a>
+    </nav>
+  </div>
+
+  <main class="container">
+    <article class="hero legal article">
+      <p class="label"><a href="/articles">&larr; Field Notes</a> &middot; {{.Article.Section}}</p>
+      <h1>{{.Article.Title}}</h1>
+      <p class="lede dim article-dek">{{.Article.Dek}}</p>
+      <p class="article-byline">NexGuard Labs &middot; {{.Article.Date}}</p>
+
+      {{range .Article.Body}}
+      <p>{{.}}</p>
+      {{end}}
+    </article>
+  </main>
+
+  {{template "sitefooter" .Site}}
+</body>
+</html>
