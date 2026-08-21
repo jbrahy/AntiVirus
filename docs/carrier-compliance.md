@@ -30,26 +30,38 @@ The compliance rules are enforced as tests against the **rendered** page rather
 than the template source. A source grep on a sibling brand came back clean while
 a disqualifying line was still on the page, and the reviewer found it.
 
-## Open blockers before submitting for a route
+## Resolved blockers
 
-**1. `nexguardhq.com` cannot receive email.** The domain has no MX record and no
-SPF record, verified from a clean resolver. Any address at that domain bounces.
-`SupportMail` therefore points at `sales@reach-x.com`, which does resolve, but
-the checklist wants the contact address to match the brand. Fix by adding MX for
-`nexguardhq.com` (the other brands route through `mx.emailredirectzone.com`),
-then set `SupportMail` to `support@nexguardhq.com` and verify the mailbox
-actually receives before submitting.
+**1. `nexguardhq.com` couldn't receive email.** Fixed 2026-08-21: added MX
+(`10 mx.emailredirectzone.com`), SPF, DMARC, and DKIM records to the
+`nexguardhq.com` Route53 zone, matching the pattern the other brands already
+use. Verified authoritatively (`aa` flag, queried from the server, not a
+laptop resolver — a cached negative answer looks identical to a real one).
+`SupportMail` is now `support@nexguardhq.com`.
 
-**2. The operating entity sells leads.** Reach X, LLC describes itself publicly
-as generating and selling leads and inbound calls. A reviewer who looks up the
-entity will find that. The consent copy promises "My number will not be shared
-with third parties or affiliates", and Reach-X's other brands are affiliates, so
-that promise covers them.
+Still outstanding: DNS resolving is not the same as mail actually landing
+somewhere a human reads it. `mx.emailredirectzone.com` is a third-party
+forwarding service — confirm with whoever administers it that
+`support@nexguardhq.com` is configured to forward to a real inbox, then send
+a test message end to end, before submitting for review.
 
-That promise is currently true: nothing in this codebase sends a NexGuard user's
-phone number anywhere. It stays true only if NexGuard signups are never piped
-into the lead business. This is the exact contradiction that got Elite Home Saver
-rejected, so it has to be settled as a business decision, not a copy decision.
+**2. The operating entity sells leads.** Reach X, LLC describes itself
+publicly as generating and selling leads and inbound calls. The consent copy
+promises "My number will not be shared with third parties or affiliates",
+and Reach-X's other brands are affiliates, so that promise covers them.
+
+Decision (2026-08-21, John): **firewall NexGuard from the lead system.**
+NexGuard signups are never piped into Reach X's lead business, full stop —
+not "not yet," a standing policy. This is also already how the code
+behaves: nothing in this codebase sends a NexGuard user's phone number
+anywhere, and it should stay that way. Any future integration between
+NexGuard's user data and a lead/CRM system is a policy violation, not just
+a compliance risk — flag it rather than build it.
+
+This also keeps the SMS copy consistent with the site's own pitch
+("Protected, not monitored" — see the landing page's open-source section),
+which would otherwise directly contradict a data-sharing arrangement with
+an affiliate.
 
 ## Verifying
 

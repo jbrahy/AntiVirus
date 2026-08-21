@@ -19,16 +19,12 @@ type SiteInfo struct {
 }
 
 // Site is the live NexGuard identity.
-//
-// SupportMail: nexguardhq.com has no MX record, so any address at that domain
-// bounces. Until inbound mail is set up for the domain, this must point at a
-// mailbox that actually receives — see docs/carrier-compliance.md.
 var Site = SiteInfo{
 	Brand:       "NexGuard",
 	LegalEntity: "Reach X, LLC",
 	AddressLine: "3616 Far West Blvd., Suite 117-566",
 	AddressCity: "Austin, Texas 78731",
 	Phone:       "(877) 353-2374",
-	SupportMail: "sales@reach-x.com",
+	SupportMail: "support@nexguardhq.com",
 	Domain:      "nexguardhq.com",
 }
