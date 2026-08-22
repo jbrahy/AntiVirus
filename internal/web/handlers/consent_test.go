@@ -35,15 +35,32 @@ func TestCheckedTreatsAbsentBoxAsNoConsent(t *testing.T) {
 	}
 }
 
-func TestClientIPPrefersLeftmostForwardedFor(t *testing.T) {
-	// The app sits behind a reverse proxy, so RemoteAddr is the proxy. The
-	// leftmost X-Forwarded-For entry is the actual consenting client and is
-	// what has to land in the audit trail.
+func TestClientIPTrustsOnlyTheProxyAppendedRightmostEntry(t *testing.T) {
+	// The app sits behind exactly one Apache reverse proxy hop, which
+	// appends its own observed connection IP to X-Forwarded-For rather
+	// than replacing it — so the rightmost entry is the one Apache itself
+	// set. Everything before it is client-supplied.
 	r := httptest.NewRequest(http.MethodPost, "/signup", nil)
 	r.RemoteAddr = "127.0.0.1:44321"
-	r.Header.Set("X-Forwarded-For", "203.0.113.7, 10.0.0.1")
+	r.Header.Set("X-Forwarded-For", "10.0.0.1, 203.0.113.7")
 	if got := clientIP(r); got != "203.0.113.7" {
-		t.Errorf("clientIP = %q, want 203.0.113.7", got)
+		t.Errorf("clientIP = %q, want 203.0.113.7 (the proxy-appended entry)", got)
+	}
+}
+
+func TestClientIPIsNotSpoofableViaLeftmostForwardedForEntry(t *testing.T) {
+	// A caller can set any X-Forwarded-For header it likes. If clientIP
+	// trusted the leftmost entry, a consenting user (or anyone hitting
+	// /signup) could claim any IP address for the compliance audit trail
+	// simply by sending "X-Forwarded-For: <whatever>, <real proxy hop>".
+	r := httptest.NewRequest(http.MethodPost, "/signup", nil)
+	r.RemoteAddr = "127.0.0.1:44321"
+	r.Header.Set("X-Forwarded-For", "6.6.6.6, 203.0.113.7")
+	if got := clientIP(r); got == "6.6.6.6" {
+		t.Fatal("clientIP trusted a client-spoofed leftmost entry")
+	}
+	if got := clientIP(r); got != "203.0.113.7" {
+		t.Errorf("clientIP = %q, want 203.0.113.7 (the real proxy-observed client)", got)
 	}
 }
 

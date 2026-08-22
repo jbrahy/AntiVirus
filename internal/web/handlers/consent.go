@@ -36,15 +36,19 @@ func checked(r *http.Request, name string) bool {
 	return v == "on" || v == "1" || v == "true"
 }
 
-// clientIP returns the caller's address for the consent audit trail. The app
-// sits behind an Apache reverse proxy, so X-Forwarded-For carries the real
-// client and its leftmost entry is the one to record.
+// clientIP returns the caller's address for the consent audit trail. The
+// app sits behind exactly one Apache reverse proxy hop (no CDN or load
+// balancer in front of it — confirmed against the live vhost config), and
+// Apache's mod_proxy appends its own observed connection IP to
+// X-Forwarded-For rather than replacing it. That means the RIGHTMOST entry
+// is the one Apache itself set and is trustworthy; every entry before it
+// came from the client and is trivially spoofable by sending a crafted
+// X-Forwarded-For header — trusting the leftmost entry, as this function
+// used to, let a caller claim any IP it wanted.
 func clientIP(r *http.Request) string {
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		if first, _, ok := strings.Cut(xff, ","); ok {
-			return strings.TrimSpace(first)
-		}
-		return strings.TrimSpace(xff)
+		parts := strings.Split(xff, ",")
+		return strings.TrimSpace(parts[len(parts)-1])
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {

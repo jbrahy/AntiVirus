@@ -72,17 +72,22 @@ func Middleware(l *Limiter) func(http.Handler) http.Handler {
 	}
 }
 
-// ClientIP returns the caller's address, preferring the leftmost
-// X-Forwarded-For entry since this service sits behind an Apache reverse
-// proxy (mirrors handlers.clientIP's logic — kept separate rather than
-// exported cross-package since rate limiting is a generic HTTP concern, not
-// specific to the consent audit trail that function was written for).
+// ClientIP returns the caller's address. This service sits behind exactly
+// one Apache reverse proxy hop (no CDN or load balancer in front of it),
+// and Apache's mod_proxy appends its own observed connection IP to
+// X-Forwarded-For rather than replacing it — so the RIGHTMOST entry is the
+// one Apache itself set and is trustworthy. Every entry before it came from
+// the client and is trivially spoofable: a caller can set
+// "X-Forwarded-For: 1.2.3.4" on every request and cycle through fake IPs to
+// bypass a rate limit keyed on the leftmost entry (mirrors
+// handlers.clientIP's logic and the same bug it originally had — kept
+// separate rather than exported cross-package since rate limiting is a
+// generic HTTP concern, not specific to the consent audit trail that
+// function was written for).
 func ClientIP(r *http.Request) string {
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-		if first, _, ok := strings.Cut(xff, ","); ok {
-			return strings.TrimSpace(first)
-		}
-		return strings.TrimSpace(xff)
+		parts := strings.Split(xff, ",")
+		return strings.TrimSpace(parts[len(parts)-1])
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
