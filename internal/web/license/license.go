@@ -64,3 +64,16 @@ func Revoke(db *sql.DB, key string) error {
 	}
 	return nil
 }
+
+// RevokeAllForUser revokes every currently-active license belonging to
+// userID. Unlike Revoke, this doesn't need the plaintext key — only its
+// hash is ever stored, so a caller that only knows a user ID (like the
+// Stripe subscription.deleted webhook, which has no license key at hand)
+// needs this instead.
+func RevokeAllForUser(db *sql.DB, userID uint64) error {
+	_, err := db.Exec(`UPDATE licenses SET revoked_at = NOW() WHERE user_id = ? AND revoked_at IS NULL`, userID)
+	if err != nil {
+		return fmt.Errorf("revoking licenses for user %d: %w", userID, err)
+	}
+	return nil
+}

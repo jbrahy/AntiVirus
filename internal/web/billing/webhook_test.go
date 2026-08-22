@@ -218,7 +218,7 @@ func TestHandleWebhookMarksCanceledOnSubscriptionDeleted(t *testing.T) {
 	suffix := uniqueSuffix(t)
 	customerID := "cus_test_cancel_" + suffix
 	subscriptionID := "sub_test_cancel_" + suffix
-	insertUserWithStripeCustomerID(t, d, fmt.Sprintf("sub-cancel-%s@example.com", suffix), customerID)
+	userID := insertUserWithStripeCustomerID(t, d, fmt.Sprintf("sub-cancel-%s@example.com", suffix), customerID)
 
 	created := subscriptionEventPayload("customer.subscription.created", subscriptionID, customerID, "active", 1893456000)
 	if rec := postSignedWebhook(t, handler, created); rec.Code != http.StatusOK {
@@ -237,6 +237,63 @@ func TestHandleWebhookMarksCanceledOnSubscriptionDeleted(t *testing.T) {
 	}
 	if status != "canceled" {
 		t.Fatalf("status = %q, want %q", status, "canceled")
+	}
+
+	// Regression coverage: subscription.deleted must also revoke the
+	// license generated when the subscription went active. Before this
+	// change, cancellation only updated the subscriptions row, leaving a
+	// canceled customer's license permanently valid.
+	var revokedCount int
+	if err := d.QueryRow(`SELECT COUNT(*) FROM licenses WHERE user_id = ? AND revoked_at IS NOT NULL`, userID).Scan(&revokedCount); err != nil {
+		t.Fatalf("counting revoked licenses: %v", err)
+	}
+	if revokedCount != 1 {
+		t.Fatalf("revoked license count = %d, want 1 (license should be revoked on cancellation)", revokedCount)
+	}
+}
+
+func TestHandleWebhookUnknownSubscriptionDeletedSucceeds(t *testing.T) {
+	d := testDB(t)
+	handler := HandleWebhook(d, testWebhookSecret)
+
+	// Same reasoning as TestHandleWebhookUnknownCustomerSucceeds: this
+	// Stripe account is shared with other products, so a deleted event for
+	// a subscription this table never had a row for is expected traffic,
+	// not an error, and must not 500 (Stripe retries a 500 for up to 3
+	// days and can eventually disable the endpoint).
+	payload := subscriptionEventPayload("customer.subscription.deleted", "sub_never_seen", "cus_never_seen", "canceled", 1893456000)
+	rec := postSignedWebhook(t, handler, payload)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200 for a deleted event about an unknown subscription; body = %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestHandleWebhookPaymentFailedSucceeds(t *testing.T) {
+	d := testDB(t)
+	handler := HandleWebhook(d, testWebhookSecret)
+
+	suffix := uniqueSuffix(t)
+	payload := map[string]any{
+		"id":          "evt_test_payment_failed",
+		"object":      "event",
+		"type":        "invoice.payment_failed",
+		"api_version": stripe.APIVersion,
+		"data": map[string]any{
+			"object": map[string]any{
+				"id":       "in_test_" + suffix,
+				"object":   "invoice",
+				"customer": "cus_test_" + suffix,
+			},
+		},
+	}
+	b, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("marshaling payload: %v", err)
+	}
+
+	rec := postSignedWebhook(t, handler, b)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body = %s", rec.Code, rec.Body.String())
 	}
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/jbrahy/AntiVirus/internal/web/config"
 	webdb "github.com/jbrahy/AntiVirus/internal/web/db"
 	"github.com/jbrahy/AntiVirus/internal/web/handlers"
+	"github.com/jbrahy/AntiVirus/internal/web/ratelimit"
 )
 
 func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux {
@@ -38,10 +39,18 @@ func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux
 	r.Get("/articles/{slug}", handlers.ArticleShow(tmpl))
 	r.Get("/alternatives", handlers.Alternatives(tmpl))
 
+	// Login attempts and license validation are both credential-guessing
+	// surfaces (a password, a license key) and both get a per-IP rate limit
+	// for it. Separate limiters: license validation is a machine client
+	// calling periodically, not a human filling out a form, so it gets a
+	// higher ceiling.
+	loginLimiter := ratelimit.New(5, 15*time.Minute)
+	licenseLimiter := ratelimit.New(30, time.Minute)
+
 	r.Get("/signup", handlers.SignupPage(db, tmpl))
 	r.Post("/signup", handlers.SignupPage(db, tmpl))
 	r.Get("/login", handlers.LoginPage(db, tmpl))
-	r.Post("/login", handlers.LoginPage(db, tmpl))
+	r.With(ratelimit.Middleware(loginLimiter)).Post("/login", handlers.LoginPage(db, tmpl))
 
 	r.Group(func(r chi.Router) {
 		r.Use(auth.RequireAuth(db))
@@ -50,7 +59,7 @@ func newRouter(db *sql.DB, tmpl *template.Template, cfg *config.Config) *chi.Mux
 		r.Post("/logout", handlers.LogoutHandler(db))
 	})
 
-	r.Post("/api/v1/license/validate", handlers.ValidateLicenseAPI(db))
+	r.With(ratelimit.Middleware(licenseLimiter)).Post("/api/v1/license/validate", handlers.ValidateLicenseAPI(db))
 
 	// Stripe's webhook caller has no session cookie; its authentication is
 	// the webhook signature verification that HandleWebhook itself performs,

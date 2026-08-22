@@ -105,6 +105,41 @@ func TestValidateRejectsUnknownKey(t *testing.T) {
 	}
 }
 
+func TestRevokeAllForUserRevokesOnlyThatUsersLicenses(t *testing.T) {
+	d := testDB(t)
+	u1, err := auth.CreateUser(d, uniqueEmail(t, "revoke-all-user-1"), "password123")
+	if err != nil {
+		t.Fatalf("CreateUser: %v", err)
+	}
+	u2, err := auth.CreateUser(d, uniqueEmail(t, "revoke-all-user-2"), "password123")
+	if err != nil {
+		t.Fatalf("CreateUser: %v", err)
+	}
+	key1, err := Generate(d, u1.ID)
+	if err != nil {
+		t.Fatalf("Generate (u1): %v", err)
+	}
+	key2, err := Generate(d, u2.ID)
+	if err != nil {
+		t.Fatalf("Generate (u2): %v", err)
+	}
+
+	if err := RevokeAllForUser(d, u1.ID); err != nil {
+		t.Fatalf("RevokeAllForUser: %v", err)
+	}
+
+	if _, valid, err := Validate(d, key1); err != nil {
+		t.Fatalf("Validate (u1): %v", err)
+	} else if valid {
+		t.Fatal("expected u1's key to be revoked")
+	}
+	if _, valid, err := Validate(d, key2); err != nil {
+		t.Fatalf("Validate (u2): %v", err)
+	} else if !valid {
+		t.Fatal("expected u2's key to remain valid, RevokeAllForUser must be scoped to the given user")
+	}
+}
+
 func TestValidateRejectsRevokedKey(t *testing.T) {
 	d := testDB(t)
 	u, err := auth.CreateUser(d, uniqueEmail(t, "revoke-user"), "password123")

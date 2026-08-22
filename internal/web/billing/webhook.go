@@ -68,6 +68,19 @@ func HandleWebhook(db *sql.DB, webhookSecret string) http.HandlerFunc {
 				http.Error(w, fmt.Sprintf("canceling subscription: %v", err), http.StatusInternalServerError)
 				return
 			}
+		case "invoice.payment_failed":
+			// Stripe's own retry schedule (dunning) handles re-attempting the
+			// charge, and the subscription's status moving to past_due/unpaid
+			// arrives separately as customer.subscription.updated, which the
+			// case above already syncs into the subscriptions table. This case
+			// exists so a failed payment is at least visible in the server log
+			// instead of silently falling through the switch with no trace.
+			var inv stripe.Invoice
+			if err := json.Unmarshal(event.Data.Raw, &inv); err != nil {
+				http.Error(w, "parsing invoice payload", http.StatusBadRequest)
+				return
+			}
+			fmt.Fprintf(os.Stderr, "webhook: payment failed for stripe customer %s, invoice %s\n", inv.Customer.ID, inv.ID)
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -124,9 +137,26 @@ func upsertSubscription(db *sql.DB, sub *stripe.Subscription) error {
 }
 
 func cancelSubscription(db *sql.DB, stripeSubscriptionID string) error {
-	_, err := db.Exec(`UPDATE subscriptions SET status = 'canceled' WHERE stripe_subscription_id = ?`, stripeSubscriptionID)
+	// Same "unknown Stripe object, don't 500" reasoning as
+	// errUnknownStripeCustomer above: this Stripe account is shared with
+	// other products, so a subscription.deleted event for a subscription
+	// this table never had is expected traffic, not an error.
+	var userID uint64
+	err := db.QueryRow(`SELECT user_id FROM subscriptions WHERE stripe_subscription_id = ?`, stripeSubscriptionID).Scan(&userID)
+	if err == sql.ErrNoRows {
+		fmt.Fprintf(os.Stderr, "webhook: ignoring subscription.deleted for unknown subscription %s\n", stripeSubscriptionID)
+		return nil
+	}
 	if err != nil {
+		return fmt.Errorf("looking up user for subscription %s: %w", stripeSubscriptionID, err)
+	}
+
+	if _, err := db.Exec(`UPDATE subscriptions SET status = 'canceled' WHERE stripe_subscription_id = ?`, stripeSubscriptionID); err != nil {
 		return fmt.Errorf("canceling subscription: %w", err)
+	}
+
+	if err := license.RevokeAllForUser(db, userID); err != nil {
+		return fmt.Errorf("revoking license after cancellation: %w", err)
 	}
 	return nil
 }
